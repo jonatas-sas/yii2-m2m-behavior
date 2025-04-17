@@ -43,8 +43,15 @@ jobs:
       - name: 📊 Run static analysis (PHPStan)
         run: vendor/bin/phpstan analyse --memory-limit=512M
 
+      - name: 🧹 Debug: Show coverage file
+        if: always()
+        run: |
+          echo "Checking if coverage.clover exists:" 
+          ls -lh coverage.clover || echo "❌ coverage.clover not found"
+
       - name: 📄 Upload coverage to Coveralls
         if: always()
         run: vendor/bin/php-coveralls --coverage_clover=coverage.clover --json_path=coveralls-upload.json -v
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
