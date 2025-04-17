@@ -16,11 +16,15 @@
     </testsuite>
   </testsuites>
 
-  <php>
-    <env name="YII_ENV" value="test"/>
-    <env name="YII_DEBUG" value="1"/>
-    <env name="DB_DSN" value="sqlite::memory:"/>
-    <env name="DB_USERNAME" value=""/>
-    <env name="DB_PASSWORD" value=""/>
-  </php>
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </coverage>
+
+  <filter>
+    <whitelist>
+      <directory suffix=".php">src</directory>
+    </whitelist>
+  </filter>
 </phpunit>
