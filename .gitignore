@@ -57,3 +57,7 @@ Thumbs.db
 ######################
 /vendor
 /composer.lock
+
+# Coverage #
+######################
+/coverage.clover

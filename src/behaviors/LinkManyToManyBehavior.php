@@ -29,7 +29,7 @@ use yii\db\StaleObjectException;
  *                 'referenceAttribute' => 'categoryIds',
  *                 'deleteOnUnlink'     => true, // default
  *                 'extraColumns'       => [
- *                     'created_at' => fn() => time(),
+ *                     'created_at' => static fn() => time(),
  *                     'type'       => 'manual',
  *                 ],
  *             ],
@@ -122,7 +122,7 @@ class LinkManyToManyBehavior extends Behavior
      *
      * @return array
      */
-    protected function initReferenceValue()
+    protected function initReferenceValue(): array
     {
         $result         = [];
         $relatedRecords = $this->owner->{$this->relation};
@@ -251,7 +251,7 @@ class LinkManyToManyBehavior extends Behavior
 
         if (!empty($newReferences)) {
             $relatedClass = $this->owner->getRelation($this->relation)->modelClass;
-            $linkModels = $relatedClass::findAll(array_values($newReferences));
+            $linkModels   = $relatedClass::findAll(array_values($newReferences));
         }
 
         foreach ($unlinkModels as $model) {

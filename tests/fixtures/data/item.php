@@ -5,6 +5,7 @@ return [
         'id'   => 1,
         'name' => 'Notebook',
     ],
+
     'chair' => [
         'id'   => 2,
         'name' => 'Chair',
