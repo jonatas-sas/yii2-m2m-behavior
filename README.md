@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)
 [![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml)
-[![Coverage Status](https://coveralls.io/repos/github/jonatas-sas/yii2-m2m-behavior/badge.svg?branch=main)](https://coveralls.io/github/jonatas-sas/yii2-m2m-behavior?branch=main)
+[![codecov](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
 
 ## Overview
 

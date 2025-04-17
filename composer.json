@@ -27,7 +27,6 @@
     "phpunit/phpunit": "^9.6",
     "yiisoft/yii2-codeception": "^2.0",
     "codeception/codeception": "^4.2",
-    "php-coveralls/php-coveralls": "^2.5",
     "phpstan/phpstan": "^1.11",
     "squizlabs/php_codesniffer": "^3.7"
   },
