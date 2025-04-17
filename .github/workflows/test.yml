@@ -1,0 +1,51 @@
+name: Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+  push:
+    branches: [main]
+
+  release:
+    types: [published]
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [7.4, 8.0, 8.1, 8.2, 8.3]
+
+    steps:
+      - name: ✨ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ⚙ Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo, sqlite
+          tools: composer:v2
+
+      - name: 🔄 Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: 🔢 Validate composer configuration
+        run: composer validate --strict
+
+      - name: 🔧 Run unit tests (PHPUnit with coverage)
+        run: vendor/bin/phpunit --coverage-clover=coverage.clover
+
+      - name: 📊 Run static analysis (PHPStan)
+        run: vendor/bin/phpstan analyse --memory-limit=512M
+
+      - name: 📄 Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-clover: coverage.clover
+
