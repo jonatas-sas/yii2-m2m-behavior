@@ -13,12 +13,12 @@ use yii\db\StaleObjectException;
  * LinkManyToManyBehavior provides support for ActiveRecord many-to-many relation saving.
  *
  * This behavior synchronizes a many-to-many relation with a virtual attribute.
- * You can use it to assign related records by their primary keys.
+ * You can use it to assign related records by their primary keys (e.g., in forms).
  *
  * Example:
  *
  * ```php
- * class Item extends ActiveRecord
+ * class Item extends \yii\db\ActiveRecord
  * {
  *     public function behaviors()
  *     {
@@ -27,11 +27,28 @@ use yii\db\StaleObjectException;
  *                 'class'              => LinkManyToManyBehavior::class,
  *                 'relation'           => 'categories',
  *                 'referenceAttribute' => 'categoryIds',
+ *                 'deleteOnUnlink'     => true, // default
+ *                 'extraColumns'       => [
+ *                     'created_at' => fn() => time(),
+ *                     'type'       => 'manual',
+ *                 ],
  *             ],
  *         ];
  *     }
+ *
+ *     public function getCategories()
+ *     {
+ *         return $this->hasMany(Category::class, ['id' => 'category_id'])
+ *             ->viaTable('item_category', ['item_id' => 'id']);
+ *     }
  * }
  * ```
+ *
+ * Notes:
+ * - The `categoryIds` attribute is **virtual**, enabled automatically by the behavior.
+ * - Ensure `getCategories()` is declared and matches the relation name.
+ * - When `deleteOnUnlink` is `false`, pivot rows will be left in place (not deleted).
+ * - `extraColumns` allows you to add extra data to the pivot (e.g., timestamps or flags). *
  *
  * @property BaseActiveRecord $owner
  * @property array|null       $referenceValue

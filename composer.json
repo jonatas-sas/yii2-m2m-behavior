@@ -12,6 +12,7 @@
   "license": "MIT",
   "minimum-stability": "stable",
   "prefer-stable": true,
+  "version": "1.0.0",
   "authors": [
     {
       "name": "Jonatas Sas",
