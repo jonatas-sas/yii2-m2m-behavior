@@ -1,22 +1,23 @@
+includes:
+  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+
 parameters:
   level: 5
+  phpVersion: 70400
+
   paths:
     - src
     - tests
 
-  phpVersion: 70400
-
-  ignoreErrors:
-    - '#Call to an undefined method yii\\db\\BaseActiveRecord::getRelation#'
-    - '#Access to an undefined property odara\\\\yii\\\\behaviors\\\\LinkManyToManyBehavior::owner#'
-    - '#Access to an undefined property .*::\$relation#'
-    - '#Access to an undefined property .*::\$referenceAttribute#'
-
-  excludes_analyse:
+  excludePaths:
     - vendor
 
-  checkMissingIterableValueType: false
   checkMissingVarTagTypehint: true
 
-includes:
-  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  ignoreErrors:
+    - '#Access to an undefined property odara\\\\yii\\\\tests\\\\models\\\\Item::\\$tagIds#'
+    - '#Access to an undefined property odara\\\\yii\\\\tests\\\\models\\\\Item::\\$tags#'
+    - '#Access to an undefined property odara\\\\yii\\\\tests\\\\models\\\\Item::\\$id#'
+    - '#Access to an undefined property yii\\\\db\\\\ActiveQueryInterface::\\$modelClass#'
+    - '#Access to static property \\$app on an unknown class Yii#'
+    - '#Variable \\$newReferences in empty\\(\\) is never defined#'
