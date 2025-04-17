@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="Yii2 App PHPCS Rules">
+  <description>PHPCS Configuration</description>
+
+  <rule ref="PSR12" />
+
+  <file>src</file>
+  
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+
+  <arg name="encoding" value="utf-8"/>
+  <arg name="tab-width" value="4"/>
+  <arg name="extensions" value="php"/>
+</ruleset>

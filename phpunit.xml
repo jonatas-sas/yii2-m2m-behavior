@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         stopOnFailure="false"
+         verbose="true"
+         convertDeprecationsToExceptions="true"
+         failOnWarning="true"
+         failOnRisky="true"
+         printerClass="PHPUnit\TextUI\DefaultResultPrinter">
+
+  <testsuites>
+    <testsuite name="Yii2 M2M Behavior Test Suite">
+      <directory suffix="Test.php">tests</directory>
+    </testsuite>
+  </testsuites>
+
+  <php>
+    <env name="YII_ENV" value="test"/>
+    <env name="YII_DEBUG" value="1"/>
+    <env name="DB_DSN" value="sqlite::memory:"/>
+    <env name="DB_USERNAME" value=""/>
+    <env name="DB_PASSWORD" value=""/>
+  </php>
+</phpunit>
