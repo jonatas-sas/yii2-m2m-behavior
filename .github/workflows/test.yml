@@ -44,8 +44,11 @@ jobs:
         run: vendor/bin/phpstan analyse --memory-limit=512M
 
       - name: 📄 Upload coverage to Coveralls
+        if: always()
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-clover: coverage.clover
-
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_DEBUG: true
