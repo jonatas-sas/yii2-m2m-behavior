@@ -1,3 +1,4 @@
+
 name: Tests
 
 on:
@@ -10,6 +11,10 @@ on:
 
   release:
     types: [published]
+
+env:
+  DEFAULT_COMPOSER_FLAGS: "--prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi"
+  XDEBUG_MODE: coverage, develop
 
 jobs:
   test:
@@ -33,27 +38,27 @@ jobs:
           tools: composer:v2
 
       - name: 🔄 Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction
+        run: composer install ${{ env.DEFAULT_COMPOSER_FLAGS }}
 
       - name: 🔢 Validate composer configuration
         run: composer validate --strict
 
       - name: 🔧 Run unit tests (PHPUnit with coverage)
-        run: vendor/bin/phpunit --coverage-clover=coverage.clover
-        env:
-          XDEBUG_MODE: coverage
+        run: vendor/bin/phpunit --verbose --coverage-clover=coverage.xml --colors=always
 
       - name: 📊 Run static analysis (PHPStan)
         run: vendor/bin/phpstan analyse --memory-limit=512M
 
-      - name: 🧹 Debug Show coverage file
-        if: always()
+      - name: 🧹 Debug - Show coverage file
+        if: matrix.php == '7.4'
         run: |
-          echo "Checking if coverage.clover exists:" 
-          ls -lh coverage.clover || echo "❌ coverage.clover not found"
+          echo "Checking if coverage.xml exists:"
+          ls -lh coverage.xml || echo "❌ coverage.xml not found"
 
-      - name: 📄 Upload coverage to Coveralls
-        if: always()
-        run: vendor/bin/php-coveralls --coverage_clover=coverage.clover --json_path=coveralls-upload.json -v
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: 📄 Upload coverage to Codecov
+        if: matrix.php == '7.4'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+
