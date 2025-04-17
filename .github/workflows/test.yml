@@ -28,8 +28,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pdo, sqlite
-          coverage: pcov
+          extensions: mbstring, pdo, sqlite, xdebug
+          coverage: xdebug
           tools: composer:v2
 
       - name: 🔄 Install Composer dependencies
@@ -40,11 +40,13 @@ jobs:
 
       - name: 🔧 Run unit tests (PHPUnit with coverage)
         run: vendor/bin/phpunit --coverage-clover=coverage.clover
+        env:
+          XDEBUG_MODE: coverage
 
       - name: 📊 Run static analysis (PHPStan)
         run: vendor/bin/phpstan analyse --memory-limit=512M
 
-      - name: 🧹 Debug - Show coverage file
+      - name: 🧹 Debug Show coverage file
         if: always()
         run: |
           echo "Checking if coverage.clover exists:" 
@@ -52,10 +54,6 @@ jobs:
 
       - name: 📄 Upload coverage to Coveralls
         if: always()
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-clover: coverage.clover
+        run: vendor/bin/php-coveralls --coverage_clover=coverage.clover --json_path=coveralls-upload.json -v
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_DEBUG: true
