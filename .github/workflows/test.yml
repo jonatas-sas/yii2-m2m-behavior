@@ -29,6 +29,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pdo, sqlite
+          coverage: pcov
           tools: composer:v2
 
       - name: 🔄 Install Composer dependencies
