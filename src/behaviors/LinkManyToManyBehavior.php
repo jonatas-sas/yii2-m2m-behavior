@@ -251,7 +251,7 @@ class LinkManyToManyBehavior extends Behavior
 
         if (!empty($newReferences)) {
             $relatedClass = $this->owner->getRelation($this->relation)->modelClass;
-            $linkModels   = $relatedClass::findAll(array_values($newReferences));
+            $linkModels = $relatedClass::findAll(array_values($newReferences));
         }
 
         foreach ($unlinkModels as $model) {

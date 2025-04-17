@@ -12,12 +12,11 @@ parameters:
   excludePaths:
     - vendor
 
+  bootstrapFiles:
+    - vendor/yiisoft/yii2/Yii.php
+
   checkMissingVarTagTypehint: true
+  treatPhpDocTypesAsCertain: false
 
   ignoreErrors:
-    - '#Access to an undefined property odara\\\\yii\\\\tests\\\\models\\\\Item::\\$tagIds#'
-    - '#Access to an undefined property odara\\\\yii\\\\tests\\\\models\\\\Item::\\$tags#'
-    - '#Access to an undefined property odara\\\\yii\\\\tests\\\\models\\\\Item::\\$id#'
-    - '#Access to an undefined property yii\\\\db\\\\ActiveQueryInterface::\\$modelClass#'
-    - '#Access to static property \\$app on an unknown class Yii#'
-    - '#Variable \\$newReferences in empty\\(\\) is never defined#'
+     - '#Access to an undefined property (.*)modelClass.#'

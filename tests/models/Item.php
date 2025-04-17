@@ -3,12 +3,18 @@
 namespace odara\yii\tests\models;
 
 use odara\yii\behaviors\LinkManyToManyBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
  * Item model for testing LinkManyToManyBehavior.
  *
  * Represents an entity that is linked to multiple tags via a pivot table.
+ *
+ * @property int    $id
+ * @property string $name
+ * @property array  $tagIds
+ * @property Tag[]  $tags
  */
 class Item extends ActiveRecord
 {
@@ -39,7 +45,7 @@ class Item extends ActiveRecord
     /**
      * Defines the relation to Tag via the item_tag pivot table.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getTags()
     {
