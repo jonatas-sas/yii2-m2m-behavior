@@ -297,6 +297,7 @@ class LinkManyToManyBehaviorTest extends TestCase
         ]);
 
         // Tentar acessar a propriedade virtual dispara o acesso à relação
+        //@phpstan-ignore-next-line
         $model->fakeIds;
     }
 
@@ -358,7 +359,9 @@ class LinkManyToManyBehaviorTest extends TestCase
     {
         $item = new Item();
 
-        $item->name   = 'Scalar Tag';
+        $item->name = 'Scalar Tag';
+
+        // @phpstan-ignore-next-line
         $item->tagIds = 1;
 
         $item->save(false);
@@ -383,7 +386,9 @@ class LinkManyToManyBehaviorTest extends TestCase
 
         $item->attachBehavior('invalid', $behavior);
 
-        $item->name           = 'Invalid Item';
+        $item->name = 'Invalid Item';
+
+        // @phpstan-ignore-next-line
         $item->nonExistentIds = [1, 2];
 
         $item->save(false);
