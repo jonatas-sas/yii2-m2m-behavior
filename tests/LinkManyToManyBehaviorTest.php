@@ -8,6 +8,7 @@ use odara\yii\tests\fixtures\ItemCategoryFixture;
 use odara\yii\tests\fixtures\ItemFixture;
 use odara\yii\tests\fixtures\ItemTagFixture;
 use odara\yii\tests\fixtures\TagFixture;
+use odara\yii\tests\helpers\TestableLinkManyToManyBehavior;
 use odara\yii\tests\models\Item;
 use odara\yii\tests\models\Tag;
 use PHPUnit\Framework\TestCase;
@@ -77,6 +78,121 @@ class LinkManyToManyBehaviorTest extends TestCase
         $db->createCommand()->dropTable('tag')->execute();
         $db->createCommand()->dropTable('category')->execute();
         $db->createCommand()->dropTable('item')->execute();
+    }
+
+    /**
+     * It should skip attribute reading if property is not the referenceAttribute.
+     */
+    public function testAccessingUnknownPropertyThrowsException(): void
+    {
+        $post = new Item();
+
+        $this->expectException(UnknownPropertyException::class);
+
+        //@phpstan-ignore-next-line
+        $post->nonExistentAttribute;
+    }
+
+    /**
+     * It should gracefully handle access to unknown dynamic properties.
+     *
+     * This test ensures that accessing a non-existent dynamic property
+     * on the behavior throws a `yii\base\UnknownPropertyException`,
+     * verifying the fallback logic in `__get()`.
+     *
+     * @return void
+     */
+    public function testUnknownPropertyAccessTriggersExceptionSafely(): void
+    {
+        $this->expectException(UnknownPropertyException::class);
+
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'tags',
+            'referenceAttribute' => 'tagIds',
+        ]);
+
+        $item->attachBehavior('tags', $behavior);
+
+        try {
+            //@phpstan-ignore-next-line
+            $item->getBehavior('tags')->nonExistent;
+        } catch (UnknownPropertyException $e) {
+            $this->assertStringContainsString('Getting unknown property', $e->getMessage());
+
+            throw $e;
+        }
+    }
+
+    /**
+     * It should throw an exception when setting an unknown dynamic property.
+     *
+     * This test verifies that writing to a non-existent dynamic property
+     * on the behavior triggers a `yii\base\UnknownPropertyException`,
+     * confirming fallback behavior via `__set()`.
+     *
+     * @return void
+     */
+    public function testUnknownPropertySetTriggersExceptionSafely(): void
+    {
+        $this->expectException(UnknownPropertyException::class);
+
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'tags',
+            'referenceAttribute' => 'tagIds',
+        ]);
+
+        $item->attachBehavior('tags', $behavior);
+
+        //@phpstan-ignore-next-line
+        $item->getBehavior('tags')->nonExistent = [1, 2, 3];
+    }
+
+    /**
+     * It should initialize the reference value correctly from the tags relation.
+     */
+    public function testReferenceValueInitializationFromTagsRelation(): void
+    {
+        $item = new Item();
+
+        $item->name = 'Teste Init';
+
+        $item->populateRelation('tags', [
+            Tag::findOne(1),
+            Tag::findOne(2),
+            Tag::findOne(3),
+        ]);
+
+        /** @var LinkManyToManyBehavior $behavior */
+        $behavior = $item->getBehavior('tags');
+
+        $this->assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $referenceValue = $behavior->getReferenceValue();
+
+        $this->assertEquals([1, 2, 3], $referenceValue);
+    }
+
+    /**
+     * It should normalize primary keys properly.
+     */
+    public function testNormalizePrimaryKey(): void
+    {
+        $behavior = new TestableLinkManyToManyBehavior();
+
+        $this->assertSame(42, $behavior->normalizePrimaryKeyPublic(42));
+
+        $object = new class {
+            public function __toString(): string
+            {
+                return 'abc123';
+            }
+        };
+
+        $this->assertSame('abc123', $behavior->normalizePrimaryKeyPublic($object));
     }
 
     /**
