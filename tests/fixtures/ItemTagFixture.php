@@ -5,14 +5,14 @@ namespace odara\yii\tests\fixtures;
 use yii\test\ActiveFixture;
 
 /**
- * Fixture for the pivot table `item_tag`.
+ * Fixture for the junction table `item_tag`.
  *
  * Used to simulate many-to-many relationships between items and tags.
  */
 class ItemTagFixture extends ActiveFixture
 {
     /**
-     * @var string the name of the pivot table.
+     * @var string the name of the junction table.
      */
     public $tableName = 'item_tag';
 

@@ -1,0 +1,79 @@
+name: Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+  push:
+    branches: [main]
+
+  release:
+    types: [published]
+
+env:
+  DEFAULT_COMPOSER_FLAGS: "--prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi"
+  XDEBUG_MODE: coverage, develop
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+
+    steps:
+      - name: ✨ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ⚙ Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo, sqlite, xdebug
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: ♻️ Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ matrix.php }}-
+
+      - name: 🔄 Install Composer dependencies
+        run: composer install ${{ env.DEFAULT_COMPOSER_FLAGS }}
+
+      - name: 🔢 Validate composer configuration
+        run: composer validate --strict
+
+      - name: 🛡️ Run security audit (Composer Audit)
+        if: matrix.php == '7.4' || matrix.php == '8.0' || matrix.php == '8.1'
+        continue-on-error: true
+        run: composer audit || echo "⚠️ Audit reported issues, including abandoned packages."
+
+      - name: 🔧 Run unit tests (PHPUnit with coverage)
+        run: vendor/bin/phpunit --verbose --coverage-clover=coverage.xml --coverage-html=coverage --colors=always
+
+      - name: 📊 Run static analysis (PHPStan)
+        run: vendor/bin/phpstan analyse --memory-limit=512M
+
+      - name: 🧼 Run PHP CodeSniffer (PSR-12)
+        run: vendor/bin/phpcs --standard=phpcs.xml
+
+      - name: 🧸 Debug coverage output
+        if: matrix.php == '7.4'
+        run: |
+          echo "Checking if coverage.xml exists:"
+          ls -lh coverage.xml || echo "❌ coverage.xml not found"
+          echo "Generated HTML coverage report in ./coverage"
+
+      - name: 📄 Upload coverage to Codecov
+        if: matrix.php == '7.4'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml

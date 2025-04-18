@@ -2,6 +2,7 @@
 
 namespace odara\yii\tests\fixtures;
 
+use odara\yii\tests\models\Item;
 use yii\test\ActiveFixture;
 
 /**
@@ -14,7 +15,7 @@ class ItemFixture extends ActiveFixture
     /**
      * @var string the model class associated with this fixture.
      */
-    public $modelClass = \odara\yii\tests\models\Item::class;
+    public $modelClass = Item::class;
 
     /**
      * @var string the path to the data file.

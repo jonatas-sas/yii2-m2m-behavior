@@ -2,7 +2,6 @@
 
 use yii\base\InvalidConfigException;
 use yii\console\Application;
-use yii\test\FixtureTrait;
 
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'test');

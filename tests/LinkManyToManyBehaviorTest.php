@@ -2,12 +2,19 @@
 
 namespace odara\yii\tests;
 
+use odara\yii\behaviors\LinkManyToManyBehavior;
+use odara\yii\tests\fixtures\CategoryFixture;
+use odara\yii\tests\fixtures\ItemCategoryFixture;
 use odara\yii\tests\fixtures\ItemFixture;
 use odara\yii\tests\fixtures\ItemTagFixture;
 use odara\yii\tests\fixtures\TagFixture;
 use odara\yii\tests\models\Item;
+use odara\yii\tests\models\Tag;
 use PHPUnit\Framework\TestCase;
 use Yii;
+use yii\base\Event;
+use yii\base\UnknownPropertyException;
+use yii\db\ActiveRecordInterface;
 use yii\db\Query;
 use yii\test\FixtureTrait;
 
@@ -26,9 +33,11 @@ class LinkManyToManyBehaviorTest extends TestCase
     public function fixtures()
     {
         return [
-            'items'    => ItemFixture::class,
-            'tags'     => TagFixture::class,
-            'item_tag' => ItemTagFixture::class,
+            'items'         => ItemFixture::class,
+            'tags'          => TagFixture::class,
+            'categories'    => CategoryFixture::class,
+            'item_tag'      => ItemTagFixture::class,
+            'item_category' => ItemCategoryFixture::class,
         ];
     }
 
@@ -64,7 +73,9 @@ class LinkManyToManyBehaviorTest extends TestCase
         $db = Yii::$app->db;
 
         $db->createCommand()->dropTable('item_tag')->execute();
+        $db->createCommand()->dropTable('item_category')->execute();
         $db->createCommand()->dropTable('tag')->execute();
+        $db->createCommand()->dropTable('category')->execute();
         $db->createCommand()->dropTable('item')->execute();
     }
 
@@ -106,9 +117,15 @@ class LinkManyToManyBehaviorTest extends TestCase
      */
     public function testItShouldUnlinkModelsOnUpdate(): void
     {
+        /** @var Item $item */
         $item = Item::findOne(1);
 
+        $item->tagIds = [1, 2];
+        $item->save(false);
+        $item->refresh();
+
         $this->assertNotEmpty($item->tags, 'Expected tags before unlink');
+        $this->assertCount(2, $item->tags);
 
         $item->tagIds = [];
 
@@ -120,11 +137,16 @@ class LinkManyToManyBehaviorTest extends TestCase
     }
 
     /**
-     * It should unlink all models from pivot table when the owner is deleted.
+     * It should unlink all models from junction table when the owner is deleted.
      */
     public function testItShouldUnlinkAllOnDelete(): void
     {
+        /** @var Item $item */
         $item = Item::findOne(1);
+
+        $item->tagIds = [1, 2];
+        $item->save(false);
+        $item->refresh();
 
         $this->assertNotNull($item);
         $this->assertNotEmpty($item->tags);
@@ -135,8 +157,257 @@ class LinkManyToManyBehaviorTest extends TestCase
 
         $this->assertFalse(
             (new Query())->from('item_tag')->where(['item_id' => $itemId])->exists(),
-            'Expected no records in pivot table after delete'
+            'Expected no records in junction table after delete'
         );
+    }
+
+    /**
+     * Test that when `deleteOnUnlink` is true, unlinked relations are
+     * physically removed from the junction table.
+     *
+     * This test verifies that:
+     * - An item can be created and saved with multiple tags
+     * - When one of the tag IDs is removed, the corresponding relation is deleted
+     * - The junction table no longer contains the unlinked tag
+     *
+     * @return void
+     */
+    public function testDeleteOnUnlinkRemovesUnlinkedRelations(): void
+    {
+        $item = new Item();
+
+        $item->name   = 'Test Item';
+        $item->tagIds = [1, 2, 3];
+
+        $this->assertTrue($item->save(), 'Initial save failed');
+
+        // Ensure that all three tags are linked
+        $this->assertCount(3, $item->tags, 'Initial tags count should be 3');
+
+        // Remove tag ID 2 from the list
+        $item->tagIds = [1, 3];
+
+        $this->assertTrue($item->save(), 'Update with reduced tags failed');
+
+        // Refresh and verify that tag ID 2 has been removed
+        $item->refresh();
+
+        $tagIds = array_map(fn ($tag) => (int)$tag->id, $item->tags);
+
+        sort($tagIds);
+
+        $this->assertEquals([1, 3], $tagIds, 'Tag with ID 2 should have been unlinked');
+
+        // Ensure the junction entry was physically removed
+        $exists = (new Query())
+            ->from('item_tag')
+            ->where(['item_id' => $item->id, 'tag_id' => 2])
+            ->exists();
+
+        $this->assertFalse($exists, 'junction table should not contain tag_id 2 after unlinking');
+    }
+
+    /**
+     * Test that when `deleteOnUnlink` is false, unlinked relations are not
+     * removed from the junction table.
+     *
+     * This ensures that:
+     * - The unlink logic respects the configuration
+     * - Soft unlinks are possible (e.g., for audit/history or custom cleanup)
+     *
+     * @return void
+     */
+    public function testUnlinkedRelationsAreNotDeletedWhenDeleteOnUnlinkIsFalse(): void
+    {
+        // Ensure required tags exist
+        foreach ([10, 20] as $id) {
+            /** @var Tag $tag */
+            $tag = Tag::findOne($id);
+
+            if (!$tag) {
+                $tag = new Tag(['id' => $id, 'name' => "Tag $id"]);
+
+                $tag->save(false);
+            }
+        }
+
+        // Create item with both tag relations
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'tags',
+            'referenceAttribute' => 'tagIds',
+            'deleteOnUnlink'     => false,
+            'extraColumns'       => [
+                'external_id' => static fn (Tag $model) => $model->id,
+            ],
+        ]);
+
+        $item->detachBehavior('tasgs');
+        $item->attachBehavior('tags', $behavior);
+
+        $item->name   = 'Soft Link Item';
+        $item->tagIds = [10, 20];
+
+        $this->assertTrue($item->save(), 'Initial save failed');
+
+        $item->refresh();
+
+        $this->assertCount(2, $item->tags, 'Initial tag count should be 2');
+
+        // Modify tagIds to only keep one
+        $item->tagIds = [10];
+
+        $this->assertTrue($item->save(), 'Update with tag removed failed');
+
+        $item->refresh();
+
+        $tagIds = array_map(fn ($tag) => (int)$tag->id, $item->tags);
+
+        $this->assertEquals([10], $tagIds, 'Remaining tag should be ID 10');
+
+        // Now verify that the junction still contains the removed relation
+        $exists = (new Query())
+            ->from('item_tag')
+            ->where(['item_id' => null, 'tag_id' => null, 'external_id' => 20])
+            ->exists();
+
+        $message = 'junction entry for external_id 20 should still exist when deleteOnUnlink=false';
+
+        $this->assertTrue($exists, $message);
+    }
+
+    /**
+     * It should throw an exception if the relation does not exist in the model.
+     *
+     * @return void
+     */
+    public function testThrowsIfRelationDoesNotExist(): void
+    {
+        $this->expectException(UnknownPropertyException::class);
+        $this->expectExceptionMessage('Getting unknown property:');
+
+        $model = new Item();
+
+        // Comportamento com relação inválida
+        $model->attachBehavior('m2m', [
+            'class'              => LinkManyToManyBehavior::class,
+            'relation'           => 'nonExistentRelation',
+            'referenceAttribute' => 'fakeIds',
+        ]);
+
+        // Tentar acessar a propriedade virtual dispara o acesso à relação
+        //@phpstan-ignore-next-line
+        $model->fakeIds;
+    }
+
+    /**
+     * It should support multiple LinkManyToManyBehavior instances on the same model.
+     */
+    public function testMultipleBehaviorsWorkIndependently(): void
+    {
+        $item = new Item();
+
+        $item->name        = 'Multi-Behavior Item';
+        $item->tagIds      = [1, 2];
+        $item->categoryIds = [1, 2];
+
+        $item->save(false);
+
+        $this->assertCount(2, $item->tags, 'Tag relation should have 2 entries.');
+        $this->assertCount(2, $item->categories, 'Category relation should have 2 entries.');
+    }
+
+    /**
+     * It should resolve extraColumns using callables that receive the related model.
+     */
+    public function testExtraColumnsReceivesRelatedModel(): void
+    {
+        $called = false;
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'tags',
+            'referenceAttribute' => 'tagIds',
+            'extraColumns'       => [
+                'external_id' => function (Tag $model) use (&$called) {
+                    $called = true;
+
+                    $this->assertInstanceOf(ActiveRecordInterface::class, $model);
+
+                    return $model->id;
+                },
+            ],
+        ]);
+
+        $item = new Item();
+
+        $item->detachBehavior('tags');
+        $item->attachBehavior('tags', $behavior);
+
+        $item->name   = 'Test Item';
+        $item->tagIds = [1];
+
+        $item->save(false);
+
+        $this->assertTrue($called, 'Extra column callable should have been called with related model.');
+    }
+
+    /**
+     * It should normalize single scalar values in reference attribute as array.
+     */
+    public function testReferenceAttributeScalarValueIsNormalized(): void
+    {
+        $item = new Item();
+
+        $item->name = 'Scalar Tag';
+
+        // @phpstan-ignore-next-line
+        $item->tagIds = 1;
+
+        $item->save(false);
+
+        $this->assertCount(1, $item->tags, 'Should normalize scalar tag ID to array.');
+        $this->assertEquals(1, $item->tags[0]->id);
+    }
+
+    /**
+     * It should throw an error if the relation is missing or invalid.
+     */
+    public function testMissingRelationThrowsException(): void
+    {
+        $this->expectException(UnknownPropertyException::class);
+
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'nonExistentRelation',
+            'referenceAttribute' => 'nonExistentIds',
+        ]);
+
+        $item->attachBehavior('invalid', $behavior);
+
+        $item->name = 'Invalid Item';
+
+        // @phpstan-ignore-next-line
+        $item->nonExistentIds = [1, 2];
+
+        $item->save(false);
+
+        $behavior->afterSave(new Event(['sender' => $item]));
+    }
+
+    /**
+     * It should not trigger link/unlink if referenceAttribute was not set.
+     */
+    public function testReferenceAttributeNotSetDoesNothing(): void
+    {
+        $item = new Item();
+
+        $item->name = 'No Reference Attribute';
+
+        $item->save(false);
+
+        $this->assertEmpty($item->tags, 'No tags should be linked.');
     }
 
     /**
@@ -166,18 +437,33 @@ class LinkManyToManyBehaviorTest extends TestCase
 
         if (!in_array('tag', $tables)) {
             $db->createCommand()->createTable('tag', [
+                'id'          => 'pk',
+                'external_id' => 'integer NULL',
+                'name'        => 'string NOT NULL',
+            ])->execute();
+        }
+
+        if (!in_array('category', $tables)) {
+            $db->createCommand()->createTable('category', [
                 'id'   => 'pk',
                 'name' => 'string NOT NULL',
             ])->execute();
         }
-
         if (!in_array('item_tag', $tables)) {
             $db->createCommand()->createTable('item_tag', [
-                'item_id' => 'integer NOT NULL',
-                'tag_id'  => 'integer NOT NULL',
-                'PRIMARY KEY(item_id, tag_id)',
+                'item_id'     => 'integer NULL',
+                'tag_id'      => 'integer NULL',
+                'external_id' => 'integer NULL',
+                'PRIMARY KEY(item_id, tag_id, external_id)',
+            ])->execute();
+        }
+
+        if (!in_array('item_category', $tables)) {
+            $db->createCommand()->createTable('item_category', [
+                'item_id'     => 'integer NOT NULL',
+                'category_id' => 'integer NOT NULL',
+                'PRIMARY KEY(item_id, category_id)',
             ])->execute();
         }
     }
-
 }

@@ -1,13 +1,20 @@
 # Yii2 Many to Many Behavior
 
-[![Latest Version](https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior)
+[![Version](https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior)
 [![License](https://img.shields.io/github/license/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)
 [![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml)
-[![Coverage Status](https://coveralls.io/repos/github/jonatas-sas/yii2-m2m-behavior/badge.svg?branch=main)](https://coveralls.io/github/jonatas-sas/yii2-m2m-behavior?branch=main)
+[![Coverage](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
 
 ## Overview
 
+> 🇺🇸 This is the English README. For the Portuguese version, [click here](README.pt_BR.md).
+
 **yii2-m2m-behavior** is a Yii2 behavior to simplify managing many-to-many relations via ActiveRecord. It synchronizes related records based on a virtual attribute (e.g., `categoryIds`) without manual `link()` and `unlink()` calls.
+
+## Requirements
+
+- PHP 7.4 or higher (tested up to 8.3)
+- Yii 2.0 or later
 
 ## Installation
 
@@ -50,7 +57,7 @@ class Item extends \yii\db\ActiveRecord
 ### Delete on Unlink
 
 ```php
-'deleteOnUnlink' => false // Prevents deleting pivot rows when unlinked
+'deleteOnUnlink' => false // Prevents deleting junction rows when unlinked
 ```
 
 ### Extra Columns
@@ -70,11 +77,6 @@ return [
     'tagsRelation' => [...],
 ];
 ```
-
-## Requirements
-
-- PHP 7.4 or higher (tested up to 8.3)
-- Yii 2.0 or later
 
 ## Running Tests
 
