@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] – 2025-04-18
+
+### ✅ Added
+
+- **4 new PHPUnit tests** improving coverage to 100%:
+  - Exception handling when accessing unknown property on the model
+  - Exception handling when accessing unknown dynamic property via `__get()`
+  - Exception handling when setting unknown dynamic property via `__set()`
+  - Proxy test for `normalizePrimaryKey()` with full path coverage
+- Verified fallback behavior through `UnknownPropertyException` for unsupported dynamic access.
+- All new tests are fully documented and contribute to line/method coverage.
+
 ## [1.1.0] – 2025-04-17
 
 ### 🚀 Added
