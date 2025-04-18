@@ -1,10 +1,13 @@
 # Yii2 Many to Many Behavior
 
+[![Version](https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior)
 [![License](https://img.shields.io/github/license/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)
 [![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
+[![Coverage](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
 
 ## Overview
+
+> 🇺🇸 This is the English README. For the Portuguese version, [click here](README.pt_BR.md).
 
 **yii2-m2m-behavior** is a Yii2 behavior to simplify managing many-to-many relations via ActiveRecord. It synchronizes related records based on a virtual attribute (e.g., `categoryIds`) without manual `link()` and `unlink()` calls.
 
@@ -54,7 +57,7 @@ class Item extends \yii\db\ActiveRecord
 ### Delete on Unlink
 
 ```php
-'deleteOnUnlink' => false // Prevents deleting pivot rows when unlinked
+'deleteOnUnlink' => false // Prevents deleting junction rows when unlinked
 ```
 
 ### Extra Columns

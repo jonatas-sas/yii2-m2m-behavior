@@ -9,7 +9,7 @@ use yii\db\ActiveRecord;
 /**
  * Item model for testing LinkManyToManyBehavior.
  *
- * Represents an entity that is linked to multiple tags via a pivot table.
+ * Represents an entity that is linked to multiple tags via a junction table.
  *
  * @property int        $id
  * @property string     $name
@@ -48,17 +48,11 @@ class Item extends ActiveRecord
                 'referenceAttribute' => 'categoryIds',
                 'deleteOnUnlink'     => true,
             ],
-
-            'features' => [
-                'class'              => LinkManyToManyBehavior::class,
-                'relation'           => 'features',
-                'referenceAttribute' => 'featureIds',
-            ],
         ];
     }
 
     /**
-     * Defines the relation to Tag via the item_tag pivot table.
+     * Defines the relation to Tag via the item_tag junction table.
      *
      * @return ActiveQuery
      */
@@ -69,7 +63,7 @@ class Item extends ActiveRecord
     }
 
     /**
-     * Defines the relation to Category via the item_category pivot table.
+     * Defines the relation to Category via the item_category junction table.
      *
      * @return ActiveQuery
      */

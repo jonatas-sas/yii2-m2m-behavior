@@ -47,8 +47,8 @@ use yii\db\StaleObjectException;
  * Notes:
  * - The `categoryIds` attribute is **virtual**, enabled automatically by the behavior.
  * - Ensure `getCategories()` is declared and matches the relation name.
- * - When `deleteOnUnlink` is `false`, pivot rows will be left in place (not deleted).
- * - `extraColumns` allows you to add extra data to the pivot (e.g., timestamps or flags). *
+ * - When `deleteOnUnlink` is `false`, junction rows will be left in place (not deleted).
+ * - `extraColumns` allows you to add extra data to the junction (e.g., timestamps or flags). *
  *
  * @property BaseActiveRecord $owner
  * @property array|null       $referenceValue
@@ -127,6 +127,7 @@ class LinkManyToManyBehavior extends Behavior
         $result         = [];
         $relatedRecords = $this->owner->{$this->relation};
 
+        /** @var ActiveRecordInterface $relatedRecord */
         foreach ((array)$relatedRecords as $relatedRecord) {
             $result[] = $this->normalizePrimaryKey($relatedRecord->getPrimaryKey());
         }
