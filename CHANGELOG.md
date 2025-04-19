@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] – 2025-04-19
+
+### 💥 Breaking Changes
+
+- 🐘 **Dropped support for PHP < 8.1**
+  - The minimum required PHP version is now **8.1**
+  - This change allows the use of native type declarations such as `readonly`, `never`, and union types in future updates
+  - Developers using PHP 7.4 or 8.0 must remain on version `^1.3`
+
+### 🧰 Internal Refactors
+
+- ✨ Codebase upgraded to use PHP 8.1 features:
+  - Use of native `array` shape annotations in `@var` and return types
+  - Explicit type declarations for class properties and method signatures
+  - Enhanced static analysis compatibility with tools like PHPStan and Psalm
+- ✅ Adjusted test suite and configuration to target PHP 8.1+ only
+
+### 📛 Metadata & Compatibility
+
+- 📦 Updated `composer.json`:
+  - `php` version constraint changed to `^8.1`
+  - Refreshed `require` and `require-dev` dependencies to match PHP 8.1 ecosystem
+- 🔁 Updated GitHub Actions CI matrix to drop 7.4 and 8.0, test against **8.1**, **8.2**, **8.3**, and **8.4**
+
 ## [1.3.1] – 2025-04-19
 
 ### 🛡️ Dependencies
