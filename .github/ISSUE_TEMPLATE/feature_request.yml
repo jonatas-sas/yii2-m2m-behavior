@@ -1,0 +1,35 @@
+name: "\U0001F680 Feature Request"
+description: Suggest a new idea or improvement for yii2-m2m-behavior.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to suggest a feature. Please answer the following questions to help us understand your request.
+
+  - type: input
+    id: context
+    attributes:
+      label: Context
+      description: Which part of the plugin would benefit from this change?
+      placeholder: Behavior options, documentation, test coverage, etc.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature description
+      description: Describe the proposed feature or improvement.
+      placeholder: It would be useful if the behavior triggered a custom event on link/unlink...
+
+  - type: textarea
+    id: benefit
+    attributes:
+      label: Benefit
+      description: Why would this feature be useful?
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Did you consider any alternative approaches?
+

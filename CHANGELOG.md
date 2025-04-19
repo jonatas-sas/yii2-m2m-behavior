@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] – 2025-04-19
+
+### 📚 Documentation
+
+- ✍️ New docs structure under `docs/` directory
+- 🇧🇷 Added complete documentation in Portuguese (`index.pt_BR.md`)
+- 📘 English documentation reorganized into single `index.md`
+- ✅ Includes form integration (ActiveForm), GridView, and DetailView examples
+- ⚙️ Internal links and structure standardized to match Yii2 ecosystem
+
+### 📦 Infrastructure
+
+- ➕ Added `.github/CODEOWNERS` and `ISSUE_TEMPLATE/`
+- 🧪 Added Code of Conduct and Contributing guidelines
+- 🧰 Split CI pipelines for testing, coverage and linting
+- 🐘 Added PHP_CodeSniffer (PSR-12 compliant) as lint job
+- 🔐 Added security policy and Dependabot support
+
+### 🛠️ Refactor
+
+- Project fully despersonalized (removal of maintainer name from copyright)
+- Branding changed to align with Yii2 community standards
+- Improved documentation structure and entry points
+
+---
+
 ## [1.2.0] – 2025-04-18
 
 ### ✅ Added
