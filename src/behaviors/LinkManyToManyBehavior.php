@@ -212,10 +212,6 @@ class LinkManyToManyBehavior extends Behavior
         /** @var ActiveRecordInterface[] $relatedModels */
         $relatedModels = $this->owner->{$this->relation};
 
-        if (!is_array($relatedModels)) {
-            $relatedModels = [];
-        }
-
         /** @var ActiveRecordInterface[] $relatedModels */
         foreach ($relatedModels as $relatedModel) {
             $primaryKey = $this->normalizePrimaryKey($relatedModel->getPrimaryKey());
