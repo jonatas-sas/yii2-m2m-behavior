@@ -8,39 +8,21 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml" title="Lint Workflow">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg" alt="Lint Status">
-  </a>
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml" title="Static Analysis Status">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg" alt="Static Analysis">
-  </a>
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml" title="Test Workflow">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg" alt="Tests Status">
-  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml" title="Lint Workflow"><img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg" alt="Lint Status"></a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml" title="Static Analysis Status"><img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg" alt="Static Analysis"></a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml" title="Test Workflow"><img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg" alt="Tests Status"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml" title="Security Scan">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg" alt="Security Status">
-  </a>
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates" title="Dependabot Updates">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot">
-  </a>
-  <a href="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior" title="Code Coverage" target="_blank" rel="noopener noreferrer">
-    <img src="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg" alt="Coverage">
-  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml" title="Security Scan"><img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg" alt="Security Status"></a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates" title="Dependabot Updates"><img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot"></a>
+  <a href="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior" title="Code Coverage" target="_blank" rel="noopener noreferrer"><img src="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg" alt="Coverage"></a>
 </p>
 
 <p align="center">
-  <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior/stats" title="Total Downloads" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/packagist/dt/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Total Downloads">
-  </a>
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/issues" title="Open Issues">
-    <img src="https://img.shields.io/github/issues/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Open Issues">
-  </a>
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/pulls" title="Open Pull Requests">
-    <img src="https://img.shields.io/github/issues-pr/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Open Pull Requests">
-  </a>
+  <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior/stats" title="Total Downloads" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/packagist/dt/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Total Downloads"></a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Open Issues"></a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/pulls" title="Open Pull Requests"><img src="https://img.shields.io/github/issues-pr/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Open Pull Requests"></a>
 </p>
 
 A reusable and robust behavior for managing many-to-many (M2M) relationships in **Yii2 ActiveRecord** using virtual attributes.
