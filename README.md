@@ -2,7 +2,11 @@
 
 [![Version](https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior)
 [![License](https://img.shields.io/packagist/l/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)
-[![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/tests.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions)
+[![Lint](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml)
+[![Static](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml)
+[![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml)
+[![Security](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml)
+[![Dependabot](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates)
 [![Coverage](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
 [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square)](https://www.yiiframework.com/)
 
