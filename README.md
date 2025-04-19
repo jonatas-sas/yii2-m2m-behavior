@@ -1,38 +1,53 @@
 # Yii2 Many to Many Behavior
 
 <p align="center">
-  <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior" title="View on Packagist">
+  <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior" title="View on Packagist" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Packagist Version">
+  </a>
+  <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior/stats" title="Total Downloads" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/packagist/dt/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Total Downloads">
   </a>
   <a href="LICENSE" title="View License">
     <img src="https://img.shields.io/packagist/l/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="License">
   </a>
-  <a href="https://www.yiiframework.com/" title="Yii Framework Website">
-    <img src="https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square" alt="Powered by Yii Framework">
+  <a href="https://www.yiiframework.com/" title="Yii Framework Website" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/Powered-by-Yii_Framework-green.svg?style=flat-square" alt="Powered by Yii Framework">
   </a>
 </p>
+
 <p align="center">
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml" title="Lint Workflow Status">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg" alt="Lint Workflow">
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/issues" title="Open Issues">
+    <img src="https://img.shields.io/github/issues/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Open Issues">
+  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/pulls" title="Open Pull Requests">
+    <img src="https://img.shields.io/github/issues-pr/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Open Pull Requests">
+  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml" title="Lint Workflow">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg" alt="Lint Status">
   </a>
   <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml" title="Static Analysis Status">
     <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg" alt="Static Analysis">
   </a>
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml" title="Test Workflow Status">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg" alt="Tests Workflow">
-  </a>
 </p>
+
 <p align="center">
-  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml" title="Security Scan Status">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg" alt="Security Workflow">
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml" title="Test Workflow">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg" alt="Tests Status">
+  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml" title="Security Scan">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg" alt="Security Status">
   </a>
   <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates" title="Dependabot Updates">
-    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot">
   </a>
-  <a href="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior" title="Code Coverage Report">
-    <img src="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg" alt="Code Coverage">
+  <a href="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior" title="Code Coverage" target="_blank" rel="noopener noreferrer">
+    <img src="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg" alt="Coverage">
+  </a>
+  <a href="https://www.php.net/releases/8.1/en.php" title="PHP Version 8.1+" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/PHP-8.1+-8892BF.svg?style=flat-square&logo=php" alt="PHP 8.1+">
   </a>
 </p>
+
 <p align="center">
   <img src="https://www.yiiframework.com/image/logo/yii.png" alt="Yii Framework Logo" width="160" title="Yii Framework Logo">
 </p>
