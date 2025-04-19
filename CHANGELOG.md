@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] – 2025-04-19
+
+### 🛡️ Dependencies
+
+- ⬆️ Updated Composer dependencies via Dependabot:
+  - `phpunit/phpunit`
+  - `sebastian/*` testing packages
+  - `psr/*` interface packages
+- Ensured compatibility with latest dev dependencies and tooling
+
+### 📛 Metadata & README
+
+- 🏷️ Added `require-dev` badge to `README.md`
+- 🔗 Improved badge links and Markdown structure in `README.md`
+- 🎯 Minor updates to ensure better visibility and SEO for repository
+
 ## [1.3.0] – 2025-04-19
 
 ### 📚 Documentation
