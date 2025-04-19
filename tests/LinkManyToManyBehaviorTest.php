@@ -14,6 +14,7 @@ use odara\yii\tests\models\Tag;
 use PHPUnit\Framework\TestCase;
 use Yii;
 use yii\base\Event;
+use yii\base\InvalidArgumentException;
 use yii\base\UnknownPropertyException;
 use yii\db\ActiveRecordInterface;
 use yii\db\Query;
@@ -29,7 +30,7 @@ class LinkManyToManyBehaviorTest extends TestCase
     /**
      * Loads the database fixtures.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function fixtures()
     {
@@ -469,21 +470,18 @@ class LinkManyToManyBehaviorTest extends TestCase
     }
 
     /**
-     * It should normalize single scalar values in reference attribute as array.
+     * It should throw if reference attribute is not an array.
      */
-    public function testReferenceAttributeScalarValueIsNormalized(): void
+    public function testReferenceAttributeThrowsIfNotArray(): void
     {
-        $item = new Item();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Reference value for "tagIds" must be an arrayof relations.');
 
-        $item->name = 'Scalar Tag';
+        $item       = new Item();
+        $item->name = 'Invalid Tag Input';
 
         // @phpstan-ignore-next-line
         $item->tagIds = 1;
-
-        $item->save(false);
-
-        $this->assertCount(1, $item->tags, 'Should normalize scalar tag ID to array.');
-        $this->assertEquals(1, $item->tags[0]->id);
     }
 
     /**

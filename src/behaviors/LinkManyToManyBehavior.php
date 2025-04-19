@@ -4,6 +4,7 @@ namespace odara\yii\behaviors;
 
 use yii\base\Behavior;
 use yii\base\Event;
+use yii\base\InvalidArgumentException;
 use yii\db\ActiveRecordInterface;
 use yii\db\BaseActiveRecord;
 use yii\db\Exception;
@@ -77,29 +78,20 @@ class LinkManyToManyBehavior extends Behavior
     public bool $deleteOnUnlink = true;
 
     /**
-     * @var array<mixed> the internal value for the reference attribute.
+     * @var array<mixed>|null the internal value for the reference attribute.
      */
-    private array $referenceValueInternal = [];
-
-    /**
-     * @var bool whether the reference value has been initialized.
-     */
-    private bool $isReferenceValueInitializedInternal = false;
+    private ?array $referenceValueInternal = null;
 
     /**
      * Sets the reference value explicitly.
      *
-     * @param mixed $value
+     * @param array<mixed, mixed> $values
      *
      * @return void
      */
-    public function setReferenceValue(mixed $value): void
+    public function setReferenceValue(array $values): void
     {
-        if (!is_array($value)) {
-            $value = empty($value) ? [] : [$value];
-        }
-
-        $this->referenceValueInternal = $value;
+        $this->referenceValueInternal = $values;
     }
 
     /**
@@ -109,9 +101,8 @@ class LinkManyToManyBehavior extends Behavior
      */
     public function getReferenceValue(): array
     {
-        if (!$this->isReferenceValueInitializedInternal) {
-            $this->referenceValueInternal              = $this->initReferenceValue();
-            $this->isReferenceValueInitializedInternal = true;
+        if ($this->referenceValueInternal === null) {
+            $this->referenceValueInternal = $this->initReferenceValue();
         }
 
         return $this->referenceValueInternal;
@@ -181,7 +172,7 @@ class LinkManyToManyBehavior extends Behavior
      */
     public function getIsReferenceValueInitialized(): bool
     {
-        return $this->isReferenceValueInitializedInternal;
+        return $this->referenceValueInternal !== null;
     }
 
     /**
@@ -307,10 +298,18 @@ class LinkManyToManyBehavior extends Behavior
      * @param mixed $value
      *
      * @return void
+     *
+     * @throws InvalidArgumentException
      */
     public function __set($name, $value)
     {
         if ($name === $this->referenceAttribute) {
+            if (!is_array($value)) {
+                $message = sprintf('Reference value for "%s" must be an arrayof relations.', $name);
+
+                throw new InvalidArgumentException($message);
+            }
+
             $this->setReferenceValue($value);
         } else {
             parent::__set($name, $value);
