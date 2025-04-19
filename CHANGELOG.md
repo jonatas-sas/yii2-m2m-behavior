@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] – 2025-04-19
+
+### 📚 Documentation
+
+- ✅ Reorganized badge section into **4 visual rows**: PHP/Yii/Packagist, CI workflows, security/coverage, and metadata.
+- 🧩 Added new badges:
+  - `PHP Version`, `Total Downloads`, `Open Issues`, `Pull Requests`
+- 🪄 Replaced Markdown badges with accessible `<img>` tags wrapped in `<a>`, including:
+  - `alt`, `title`, and `target="_blank"` for SEO and accessibility
+- 🎨 Fixed unwanted underlines caused by line breaks between badges
+- 🖼️ Added official **Yii Framework logo** below badges with centralized alignment
+- 📝 Improved comments in the README for maintainability
+
 ## [2.0.0] – 2025-04-19
 
 ### 💥 Breaking Changes
