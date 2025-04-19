@@ -7,6 +7,7 @@
   <file>src</file>
   
   <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>tests/bootstrap.php</exclude-pattern>
 
   <arg name="encoding" value="utf-8"/>
   <arg name="tab-width" value="4"/>

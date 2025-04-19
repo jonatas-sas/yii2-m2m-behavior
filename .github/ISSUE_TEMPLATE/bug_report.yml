@@ -1,0 +1,33 @@
+name: "\U0001F41E Bug Report"
+description: Report a reproducible bug or regression.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide a clear and concise description of the bug.
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: What version of PHP, Yii2, and this package are you using?
+      placeholder: PHP 8.2, Yii2 2.0.47, yii2-m2m-behavior 1.0.0
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide the exact steps and code to trigger the issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
