@@ -3,8 +3,7 @@
 <p align="center">
   <a href="https://www.php.net/releases/8.1/en.php" title="PHP Version 8.1+" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/PHP-8.1+-8892BF.svg?style=flat-square&logo=php" alt="PHP 8.1+">
-  </a>
-  <a href="https://www.yiiframework.com/" title="Yii Framework Website" target="_blank" rel="noopener noreferrer">
+  </a><a href="https://www.yiiframework.com/" title="Yii Framework Website" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square" alt="Powered by Yii Framework">
   </a>
   <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior" title="View on Packagist" target="_blank" rel="noopener noreferrer">
@@ -126,5 +125,5 @@ Inspired by the Yii2Tech package and rebuilt with care for modern development.
 ---
 
 <p align="center">
-  <a href="" title="Yii Framework" target="_blank"><img src="https://www.yiiframework.com/image/design/logo/yii3_full_for_dark.svg" alt="Yii Framework" width="160" title="Yii Framework"></a>
+  <a href="https://www.yiiframework.com" title="Yii Framework" target="_blank"><img src="https://www.yiiframework.com/image/design/logo/yii3_full_for_dark.svg" alt="Yii Framework" width="300" title="Yii Framework"></a>
 </p>
