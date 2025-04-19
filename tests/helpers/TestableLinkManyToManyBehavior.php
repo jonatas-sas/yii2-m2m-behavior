@@ -17,9 +17,9 @@ class TestableLinkManyToManyBehavior extends LinkManyToManyBehavior
      *
      * @param mixed $value
      *
-     * @return int|string
+     * @return mixed
      */
-    public function normalizePrimaryKeyPublic(mixed $value): int|string
+    public function normalizePrimaryKeyPublic(mixed $value): mixed
     {
         return $this->normalizePrimaryKey($value);
     }
