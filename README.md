@@ -61,7 +61,49 @@ Yii2 Many to Many Behavior helps you:
 ## 🛠 Example Usage (PHP 8.1+)
 
 ```php
-H
+use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
+use odara\yii\behaviors\LinkManyToManyBehavior;
+
+/**
+ * @property int        $id
+ * @property string     $name
+ *
+ * @property-read Tag[] $tags
+ * @property int[]      $tagIds
+ */
+class Item extends ActiveRecord
+{
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'tags' => [
+                'class' => LinkManyToManyBehavior::class,
+                'relation' => 'tags',
+                'referenceAttribute' => 'tagIds',
+                'deleteOnUnlink' => true,
+                'extraColumns' => [
+                    'source' => 'admin',
+                    'created_at' => static fn (): int => time(),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Returns the relation between Item and Tag models.
+     *
+     * @return ActiveQuery
+     */
+    public function getTags(): ActiveQuery
+    {
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])
+            ->viaTable('item_tag', ['item_id' => 'id']);
+    }
+}
 ```
 
 ### Example Form Field
