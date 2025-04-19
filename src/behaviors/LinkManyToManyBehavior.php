@@ -4,6 +4,7 @@ namespace odara\yii\behaviors;
 
 use yii\base\Behavior;
 use yii\base\Event;
+use yii\base\InvalidArgumentException;
 use yii\db\ActiveRecordInterface;
 use yii\db\BaseActiveRecord;
 use yii\db\Exception;
@@ -23,7 +24,7 @@ use yii\db\StaleObjectException;
  *     public function behaviors()
  *     {
  *         return [
- *             'm2m' => [
+ *             'categories' => [
  *                 'class'              => LinkManyToManyBehavior::class,
  *                 'relation'           => 'categories',
  *                 'referenceAttribute' => 'categoryIds',
@@ -51,60 +52,117 @@ use yii\db\StaleObjectException;
  * - `extraColumns` allows you to add extra data to the junction (e.g., timestamps or flags). *
  *
  * @property BaseActiveRecord $owner
- * @property array|null       $referenceValue
+ * @property array<mixed>     $referenceValue
  * @property bool             $isReferenceValueInitialized
  */
 class LinkManyToManyBehavior extends Behavior
 {
     /**
-     * @var string the relation name defined in the owner model.
+     * @var string|null the relation name defined in the owner model.
      */
-    public $relation;
+    public ?string $relation = null;
 
     /**
      * @var string|null the virtual attribute used to assign related record IDs.
      */
-    public $referenceAttribute;
+    public ?string $referenceAttribute = null;
 
     /**
-     * @var array additional columns to be saved into the junction table.
+     * @var array<string, int|string|bool|float|callable> additional columns to be saved into the junction table.
      */
-    public $extraColumns = [];
+    public array $extraColumns = [];
 
     /**
      * @var bool whether to delete junction table rows on unlink.
      */
-    public $deleteOnUnlink = true;
+    public bool $deleteOnUnlink = true;
 
     /**
-     * @var array|null the internal value for the reference attribute.
+     * @var array<mixed>|null the internal value for the reference attribute.
      */
-    private $referenceValueInternal;
+    private ?array $referenceValueInternal = null;
 
     /**
      * Sets the reference value explicitly.
      *
-     * @param mixed $value
+     * @param array<mixed, mixed> $values
      *
      * @return void
      */
-    public function setReferenceValue($value)
+    public function setReferenceValue(array $values): void
     {
-        $this->referenceValueInternal = $value;
+        $this->referenceValueInternal = $values;
     }
 
     /**
      * Gets the reference value, initializing it if not set.
      *
-     * @return array
+     * @return array<mixed>
      */
-    public function getReferenceValue()
+    public function getReferenceValue(): array
     {
         if ($this->referenceValueInternal === null) {
             $this->referenceValueInternal = $this->initReferenceValue();
         }
 
         return $this->referenceValueInternal;
+    }
+
+    /**
+     * Initializes the reference value from the current relation state.
+     *
+     * @return array<mixed>
+     */
+    protected function initReferenceValue(): array
+    {
+        $result = [];
+
+        /** @var ActiveRecordInterface[] $relatedRecords */
+        $relatedRecords = $this->owner->{$this->relation};
+
+        foreach ((array)$relatedRecords as $relatedRecord) {
+            $result[] = $this->normalizePrimaryKey($relatedRecord->getPrimaryKey());
+        }
+
+        return $result;
+    }
+
+    /**
+     * Normalizes a primary key for comparison.
+     *
+     * @param mixed $primaryKey
+     *
+     * @return mixed
+     */
+    protected function normalizePrimaryKey(mixed $primaryKey): mixed
+    {
+        if (is_object($primaryKey) && method_exists($primaryKey, '__toString')) {
+            return (string)$primaryKey;
+        }
+
+        return $primaryKey;
+    }
+
+    /**
+     * Resolves extra columns for the junction table, handling callables.
+     *
+     * @param ActiveRecordInterface|null $model
+     *
+     * @return array<string, mixed>
+     */
+    protected function composeExtraColumns(?ActiveRecordInterface $model = null): array
+    {
+        if (empty($this->extraColumns)) {
+            return [];
+        }
+
+        $resolved = [];
+
+        foreach ($this->extraColumns as $column => $value) {
+            $resolved[$column] = is_callable($value) ? $value($model) : $value;
+        }
+
+        return $resolved;
     }
 
     /**
@@ -118,37 +176,100 @@ class LinkManyToManyBehavior extends Behavior
     }
 
     /**
-     * Initializes the reference value from the current relation state.
+     * Declares events handled by this behavior.
      *
-     * @return array
+     * @return array<string, string>
      */
-    protected function initReferenceValue(): array
+    public function events()
     {
-        $result         = [];
-        $relatedRecords = $this->owner->{$this->relation};
-
-        /** @var ActiveRecordInterface $relatedRecord */
-        foreach ((array)$relatedRecords as $relatedRecord) {
-            $result[] = $this->normalizePrimaryKey($relatedRecord->getPrimaryKey());
-        }
-
-        return $result;
+        return [
+            BaseActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
+            BaseActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
+            BaseActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
+        ];
     }
 
     /**
-     * Normalizes a primary key for comparison.
+     * Syncs the relation after save.
      *
-     * @param mixed $primaryKey
+     * @param Event $event
      *
-     * @return string|int
+     * @return void
+     *
+     * @throws Exception|StaleObjectException
      */
-    protected function normalizePrimaryKey($primaryKey)
+    public function afterSave($event)
     {
-        if (is_object($primaryKey) && method_exists($primaryKey, '__toString')) {
-            return (string)$primaryKey;
+        if (!$this->getIsReferenceValueInitialized()) {
+            return;
         }
 
-        return $primaryKey;
+        $linkModels    = [];
+        $unlinkModels  = [];
+        $newReferences = $this->getReferenceValue();
+        $newReferences = array_unique($newReferences);
+
+        /** @var ActiveRecordInterface[] $relatedModels */
+        $relatedModels = $this->owner->{$this->relation};
+
+        /** @var ActiveRecordInterface[] $relatedModels */
+        foreach ($relatedModels as $relatedModel) {
+            $primaryKey = $this->normalizePrimaryKey($relatedModel->getPrimaryKey());
+
+            if (($index = array_search($primaryKey, $newReferences, true)) !== false) {
+                unset($newReferences[$index]);
+            } else {
+                $unlinkModels[] = $relatedModel;
+            }
+        }
+
+        if (!empty($newReferences)) {
+            /** @var ActiveRecordInterface $relatedClass */
+            $relatedClass = $this->owner->getRelation((string)$this->relation)->modelClass;
+            $linkModels   = $relatedClass::findAll(array_values($newReferences));
+        }
+
+        /** @var ActiveRecordInterface $model */
+        foreach ($unlinkModels as $model) {
+            $this->owner->unlink((string)$this->relation, $model, $this->deleteOnUnlink);
+        }
+
+        /** @var ActiveRecordInterface $model */
+        foreach ($linkModels as $model) {
+            $this->owner->link((string)$this->relation, $model, $this->composeExtraColumns($model));
+        }
+    }
+
+    /**
+     * Unlinks all models after delete.
+     *
+     * @param Event $event
+     *
+     * @return void
+     */
+    public function afterDelete($event)
+    {
+        $this->owner->unlinkAll((string)$this->relation, $this->deleteOnUnlink);
+    }
+
+    /**
+     * Supports dynamic property getter.
+     *
+     * @return bool
+     */
+    public function canGetProperty($name, $checkVars = true)
+    {
+        return parent::canGetProperty($name, $checkVars) || $name === $this->referenceAttribute;
+    }
+
+    /**
+     * Supports dynamic property setter.
+     *
+     * @return bool
+     */
+    public function canSetProperty($name, $checkVars = true)
+    {
+        return parent::canSetProperty($name, $checkVars) || $name === $this->referenceAttribute;
     }
 
     /**
@@ -173,128 +294,21 @@ class LinkManyToManyBehavior extends Behavior
      * @param mixed $value
      *
      * @return void
+     *
+     * @throws InvalidArgumentException
      */
     public function __set($name, $value)
     {
         if ($name === $this->referenceAttribute) {
+            if (!is_array($value)) {
+                $message = sprintf('Reference value for "%s" must be an arrayof relations.', $name);
+
+                throw new InvalidArgumentException($message);
+            }
+
             $this->setReferenceValue($value);
         } else {
             parent::__set($name, $value);
         }
-    }
-
-    /**
-     * Supports dynamic property getter.
-     *
-     * @return bool
-     */
-    public function canGetProperty($name, $checkVars = true)
-    {
-        return parent::canGetProperty($name, $checkVars) || $name === $this->referenceAttribute;
-    }
-
-    /**
-     * Supports dynamic property setter.
-     *
-     * @return bool
-     */
-    public function canSetProperty($name, $checkVars = true)
-    {
-        return parent::canSetProperty($name, $checkVars) || $name === $this->referenceAttribute;
-    }
-
-    /**
-     * Declares events handled by this behavior.
-     *
-     * @return array
-     */
-    public function events()
-    {
-        return [
-            BaseActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
-            BaseActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
-            BaseActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
-        ];
-    }
-
-    /**
-     * Syncs the relation after save.
-     *
-     * @param Event $event
-     *
-     * @throws Exception|StaleObjectException
-     */
-    public function afterSave($event)
-    {
-        if (!$this->getIsReferenceValueInitialized()) {
-            return;
-        }
-
-        $linkModels    = [];
-        $unlinkModels  = [];
-        $newReferences = $this->getReferenceValue();
-
-        if (!is_array($newReferences)) {
-            $newReferences = empty($newReferences) ? [] : [$newReferences];
-        }
-
-        $newReferences = array_unique($newReferences);
-
-        foreach ($this->owner->{$this->relation} as $relatedModel) {
-            $primaryKey = $this->normalizePrimaryKey($relatedModel->getPrimaryKey());
-
-            if (($index = array_search($primaryKey, $newReferences, true)) !== false) {
-                unset($newReferences[$index]);
-            } else {
-                $unlinkModels[] = $relatedModel;
-            }
-        }
-
-        if (!empty($newReferences)) {
-            $relatedClass = $this->owner->getRelation($this->relation)->modelClass;
-            $linkModels   = $relatedClass::findAll(array_values($newReferences));
-        }
-
-        foreach ($unlinkModels as $model) {
-            $this->owner->unlink($this->relation, $model, $this->deleteOnUnlink);
-        }
-
-        foreach ($linkModels as $model) {
-            $this->owner->link($this->relation, $model, $this->composeExtraColumns($model));
-        }
-    }
-
-    /**
-     * Unlinks all models after delete.
-     *
-     * @param Event $event
-     *
-     * @return void
-     */
-    public function afterDelete($event)
-    {
-        $this->owner->unlinkAll($this->relation, $this->deleteOnUnlink);
-    }
-
-    /**
-     * Resolves extra columns for the junction table, handling callables.
-     *
-     * @param ActiveRecordInterface|null $model
-     *
-     * @return array
-     */
-    protected function composeExtraColumns($model = null): array
-    {
-        if (empty($this->extraColumns)) {
-            return [];
-        }
-
-        $resolved = [];
-
-        foreach ($this->extraColumns as $column => $value) {
-            $resolved[$column] = is_callable($value) ? $value($model) : $value;
-        }
-
-        return $resolved;
     }
 }
