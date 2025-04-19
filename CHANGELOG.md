@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] – 2025-04-19
+
+### 🔒 PHP Version Policy
+
+- 🧭 Introduced a formal versioning policy aligned with [php.net's supported versions](https://www.php.net/supported-versions.php)
+- ✅ Minimum PHP version now always matches the oldest version receiving **security updates**
+- 🚫 End-of-life (EOL) PHP versions are explicitly **not supported**
+- 🆕 Latest PHP stable releases will be supported as early as possible
+- 🔐 Policy added to README under the new `"🔒 PHP Version Policy"` section
+
 ## [2.0.1] – 2025-04-19
 
 ### 📚 Documentation
