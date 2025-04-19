@@ -1,0 +1,614 @@
+{
+  "$schema": "https:\/\/json-schema.org\/draft-07\/schema",
+  "title": "Phpactor Configuration Schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "Path to JSON schema, which can be used for config autocompletion, use phpactor config:initialize to update",
+      "default": ""
+    },
+    "console_dumper_default": {
+      "description": "Name of the \"dumper\" (renderer) to use for some CLI commands",
+      "default": "indented"
+    },
+    "xdebug_disable": {
+      "description": "If XDebug should be automatically disabled",
+      "default": true
+    },
+    "command": {
+      "description": "Internal use only - name of the command which was executed"
+    },
+    "core.min_memory_limit": {
+      "description": "Ensure that PHP has a memory_limit of at least this amount in bytes",
+      "default": 1610612736
+    },
+    "class_to_file.project_root": {
+      "description": "Root path of the project (e.g. where composer.json is)",
+      "default": "%project_root%"
+    },
+    "class_to_file.brute_force_conversion": {
+      "description": "If composer not found, fallback to scanning all files (very time consuming depending on project size)",
+      "default": true
+    },
+    "code_transform.class_new.variants": {
+      "description": "Variants which should be suggested when class-create is invoked",
+      "default": []
+    },
+    "code_transform.template_paths": {
+      "description": "Paths in which to look for code templates",
+      "default": ["%project_config%\/templates", "%config%\/templates"]
+    },
+    "code_transform.indentation": {
+      "description": "Indentation chars to use in code generation and transformation",
+      "default": "    "
+    },
+    "code_transform.refactor.generate_accessor.prefix": {
+      "description": "Prefix to use for generated accessors",
+      "default": ""
+    },
+    "code_transform.refactor.generate_accessor.upper_case_first": {
+      "description": "If the first letter of a generated accessor should be made uppercase",
+      "default": false
+    },
+    "code_transform.refactor.generate_mutator.prefix": {
+      "description": "Prefix to use for generated mutators",
+      "default": "set"
+    },
+    "code_transform.refactor.generate_mutator.upper_case_first": {
+      "description": "If the first letter of a generated mutator should be made uppercase",
+      "default": true
+    },
+    "code_transform.refactor.generate_mutator.fluent": {
+      "description": "If the mutator should be fluent",
+      "default": false
+    },
+    "code_transform.import_globals": {
+      "description": "Import functions even if they are in the global namespace",
+      "default": false
+    },
+    "code_transform.refactor.object_fill.hint": {
+      "description": "Object fill refactoring: show hint as a comment",
+      "default": true
+    },
+    "code_transform.refactor.object_fill.named_parameters": {
+      "description": "Object fill refactoring: use named parameters",
+      "default": true
+    },
+    "completion_worse.completor.doctrine_annotation.enabled": {
+      "description": "Enable or disable the ``doctrine_annotation`` completor.\n\nCompletion for annotations provided by the Doctrine annotation library.",
+      "default": true
+    },
+    "completion_worse.completor.imported_names.enabled": {
+      "description": "Enable or disable the ``imported_names`` completor.\n\nCompletion for names imported into the current namespace.",
+      "default": true
+    },
+    "completion_worse.completor.worse_parameter.enabled": {
+      "description": "Enable or disable the ``worse_parameter`` completor.\n\nCompletion for method or function parameters.",
+      "default": true
+    },
+    "completion_worse.completor.named_parameter.enabled": {
+      "description": "Enable or disable the ``named_parameter`` completor.\n\nCompletion for named parameters.",
+      "default": true
+    },
+    "completion_worse.completor.constructor.enabled": {
+      "description": "Enable or disable the ``constructor`` completor.\n\nCompletion for constructors.",
+      "default": true
+    },
+    "completion_worse.completor.class_member.enabled": {
+      "description": "Enable or disable the ``class_member`` completor.\n\nCompletion for class members.",
+      "default": true
+    },
+    "completion_worse.completor.scf_class.enabled": {
+      "description": "Enable or disable the ``scf_class`` completor.\n\nBrute force completion for class names (not recommended).",
+      "default": true
+    },
+    "completion_worse.completor.local_variable.enabled": {
+      "description": "Enable or disable the ``local_variable`` completor.\n\nCompletion for local variables.",
+      "default": true
+    },
+    "completion_worse.completor.subscript.enabled": {
+      "description": "Enable or disable the ``subscript`` completor.\n\nCompletion for subscript (array access from array shapes).",
+      "default": true
+    },
+    "completion_worse.completor.declared_function.enabled": {
+      "description": "Enable or disable the ``declared_function`` completor.\n\nCompletion for functions defined in the Phpactor runtime.",
+      "default": true
+    },
+    "completion_worse.completor.declared_constant.enabled": {
+      "description": "Enable or disable the ``declared_constant`` completor.\n\nCompletion for constants defined in the Phpactor runtime.",
+      "default": true
+    },
+    "completion_worse.completor.declared_class.enabled": {
+      "description": "Enable or disable the ``declared_class`` completor.\n\nCompletion for classes defined in the Phpactor runtime.",
+      "default": true
+    },
+    "completion_worse.completor.expression_name_search.enabled": {
+      "description": "Enable or disable the ``expression_name_search`` completor.\n\nCompletion for class names, constants and functions at expression positions that are located in the index.",
+      "default": true
+    },
+    "completion_worse.completor.use.enabled": {
+      "description": "Enable or disable the ``use`` completor.\n\nCompletion for use imports.",
+      "default": true
+    },
+    "completion_worse.completor.attribute.enabled": {
+      "description": "Enable or disable the ``attribute`` completor.\n\nCompletion for attribute class names.",
+      "default": true
+    },
+    "completion_worse.completor.class_like.enabled": {
+      "description": "Enable or disable the ``class_like`` completor.\n\nCompletion for class like contexts.",
+      "default": true
+    },
+    "completion_worse.completor.type.enabled": {
+      "description": "Enable or disable the ``type`` completor.\n\nCompletion for scalar types.",
+      "default": true
+    },
+    "completion_worse.completor.keyword.enabled": {
+      "description": "Enable or disable the ``keyword`` completor.\n\nCompletion for keywords (not very accurate).",
+      "default": true
+    },
+    "completion_worse.completor.docblock.enabled": {
+      "description": "Enable or disable the ``docblock`` completor.\n\nDocblock completion.",
+      "default": true
+    },
+    "completion_worse.completor.constant.enabled": {
+      "description": null,
+      "default": false
+    },
+    "completion_worse.completor.class.limit": {
+      "description": "Suggestion limit for the filesystem based SCF class_completor",
+      "default": 100
+    },
+    "completion_worse.name_completion_priority": {
+      "description": "Strategy to use when ordering completion results for classes and functions:\n\n- `proximity`: Classes and functions will be ordered by their proximity to the text document being edited.\n- `none`: No ordering will be applied.",
+      "default": "proximity"
+    },
+    "completion_worse.snippets": {
+      "description": "Enable or disable completion snippets",
+      "default": true
+    },
+    "completion_worse.experimantal": {
+      "description": "Enable experimental functionality",
+      "default": false
+    },
+    "completion_worse.debug": {
+      "description": "Include debug info in completion results",
+      "default": false
+    },
+    "completion.dedupe": {
+      "description": "If results should be de-duplicated",
+      "default": true
+    },
+    "completion.dedupe_match_fqn": {
+      "description": "If ``completion.dedupe``, consider the class FQN in addition to the completion suggestion",
+      "default": true
+    },
+    "completion.limit": {
+      "description": "Sets a limit on the number of completion suggestions for any request"
+    },
+    "completion.label_formatter": {
+      "description": "Definition of how to format entries in the completion list",
+      "default": "helpful",
+      "enum": ["helpful", "fqn"]
+    },
+    "navigator.destinations": {
+      "description": null,
+      "default": []
+    },
+    "navigator.autocreate": {
+      "description": null,
+      "default": []
+    },
+    "rpc.store_replay": {
+      "description": "Should replays be stored?",
+      "default": false
+    },
+    "rpc.replay_path": {
+      "description": "Path where the replays should be stored",
+      "default": "%cache%\/replay.json"
+    },
+    "source_code_filesystem.project_root": {
+      "description": null,
+      "default": "%project_root%"
+    },
+    "language_server_code_transform.import_globals": {
+      "description": "Show hints for non-imported global classes and functions",
+      "default": false
+    },
+    "worse_reflection.enable_cache": {
+      "description": "If reflection caching should be enabled",
+      "default": true
+    },
+    "worse_reflection.cache_lifetime": {
+      "description": "If caching is enabled, limit the amount of time a cache entry can stay alive",
+      "default": 1
+    },
+    "worse_reflection.enable_context_location": {
+      "description": "If source code is passed to a ``Reflector`` then temporarily make it available as a\nsource location. Note this should NOT be enabled if the source code can be\nlocated in another (e.g. when running a Language Server)",
+      "default": true
+    },
+    "worse_reflection.cache_dir": {
+      "description": "Cache directory for stubs",
+      "default": "%cache%\/worse-reflection"
+    },
+    "worse_reflection.stub_dir": {
+      "description": "Location of the core PHP stubs - these will be scanned and cached on the first request",
+      "default": "%application_root%\/vendor\/jetbrains\/phpstorm-stubs"
+    },
+    "worse_reflection.diagnostics.undefined_variable.suggestion_levenshtein_disatance": {
+      "description": "Levenshtein distance to use when suggesting corrections for variable names",
+      "type": ["integer"],
+      "default": 4
+    },
+    "file_path_resolver.project_root": {
+      "description": null,
+      "default": "\/home\/cdom\/Projects\/work\/applications\/tutv"
+    },
+    "file_path_resolver.app_name": {
+      "description": null,
+      "default": "phpactor"
+    },
+    "file_path_resolver.application_root": {
+      "description": null
+    },
+    "file_path_resolver.enable_cache": {
+      "description": null,
+      "default": true
+    },
+    "file_path_resolver.enable_logging": {
+      "description": null,
+      "default": true
+    },
+    "logging.enabled": {
+      "description": null,
+      "type": ["boolean"],
+      "default": false
+    },
+    "logging.fingers_crossed": {
+      "description": null,
+      "type": ["boolean"],
+      "default": false
+    },
+    "logging.path": {
+      "description": null,
+      "type": ["string"],
+      "default": "application.log"
+    },
+    "logging.level": {
+      "description": null,
+      "type": ["string"],
+      "default": "warning",
+      "enum": [
+        "emergency",
+        "alert",
+        "critical",
+        "error",
+        "warning",
+        "notice",
+        "info",
+        "debug"
+      ]
+    },
+    "logger.name": {
+      "description": null,
+      "type": ["string"],
+      "default": "logger"
+    },
+    "logging.formatter": {
+      "description": null
+    },
+    "composer.enable": {
+      "description": "Include of the projects autoloader to facilitate class location. Note that when including an autoloader code _may_ be executed. This option may be disabled when using the indexer",
+      "default": true
+    },
+    "composer.autoloader_path": {
+      "description": "Path to project's autoloader, can be an array",
+      "default": "%project_root%\/vendor\/autoload.php"
+    },
+    "composer.autoload_deregister": {
+      "description": "Immediately de-register the autoloader once it has been included (prevent conflicts with Phpactor's autoloader). Some platforms may require this to be disabled",
+      "default": true
+    },
+    "composer.class_maps_only": {
+      "description": "Register the composer class maps only, do not register the autoloader - RECOMMENDED",
+      "default": true
+    },
+    "console.verbosity": {
+      "description": "Verbosity level",
+      "default": 32,
+      "enum": [16, 32, 64, 128, 256]
+    },
+    "console.decorated": {
+      "description": "Whether to decorate messages (null for auto-guessing)",
+      "enum": [true, false, null]
+    },
+    "php.version": {
+      "description": "Consider this value to be the project\\'s version of PHP (e.g. `7.4`). If omitted\nit will check `composer.json` (by the configured platform then the PHP requirement) before\nfalling back to the PHP version of the current process."
+    },
+    "language_server.catch_errors": {
+      "description": null,
+      "default": true
+    },
+    "language_server.enable_workspace": {
+      "description": "If workspace management \/ text synchronization should be enabled (this isn't required for some language server implementations, e.g. static analyzers)",
+      "default": true
+    },
+    "language_server.session_parameters": {
+      "description": "Phpactor parameters (config) that apply only to the language server session",
+      "default": []
+    },
+    "language_server.method_alias_map": {
+      "description": "Allow method names to be re-mapped. Useful for maintaining backwards compatibility",
+      "default": []
+    },
+    "language_server.diagnostic_sleep_time": {
+      "description": "Amount of time to wait before analyzing the code again for diagnostics",
+      "default": 1000
+    },
+    "language_server.diagnostics_on_update": {
+      "description": "Perform diagnostics when the text document is updated",
+      "default": true
+    },
+    "language_server.diagnostics_on_save": {
+      "description": "Perform diagnostics when the text document is saved",
+      "default": true
+    },
+    "language_server.diagnostics_on_open": {
+      "description": "Perform diagnostics when opening a text document",
+      "default": true
+    },
+    "language_server.diagnostic_providers": {
+      "description": "Specify which diagnostic providers should be active (default to all)"
+    },
+    "language_server.diagnostic_outsource": {
+      "description": "If applicable diagnostics should be \"outsourced\" to a different process",
+      "default": true
+    },
+    "language_server.file_events": {
+      "description": "Register to receive file events",
+      "default": true
+    },
+    "language_server.file_event_globs": {
+      "description": null,
+      "default": ["**\/*.php"]
+    },
+    "language_server.profile": {
+      "description": "Logs timing information for incoming LSP requests",
+      "default": false
+    },
+    "language_server.trace": {
+      "description": "Log incoming and outgoing messages (needs log formatter to be set to ``json``)",
+      "default": false
+    },
+    "language_server.shutdown_grace_period": {
+      "description": "Amount of time (in milliseconds) to wait before responding to a shutdown notification",
+      "default": 200
+    },
+    "language_server.phpactor_bin": {
+      "description": "Internal use only - name path to Phpactor binary",
+      "default": "\/nix\/store\/9yjx2mwjr97idb12m6a8mgm7iskivz38-phpactor-2024.03.09.0\/share\/php\/phpactor\/lib\/Extension\/LanguageServer\/..\/..\/..\/bin\/phpactor"
+    },
+    "language_server.self_destruct_timeout": {
+      "description": "Wait this amount of time (in milliseconds) after a shutdown request before self-destructing",
+      "default": 2500
+    },
+    "language_server.diagnostic_outsource_timeout": {
+      "description": "Kill the diagnostics process if it outlives this timeout",
+      "default": 5
+    },
+    "language_server_completion.trim_leading_dollar": {
+      "description": "If the leading dollar should be trimmed for variable completion suggestions",
+      "default": false
+    },
+    "language_server_reference_reference_finder.reference_timeout": {
+      "description": "Stop searching for references after this time (in seconds) has expired",
+      "default": 60
+    },
+    "language_server_worse_reflection.workspace_index.update_interval": {
+      "description": "Minimum interval to update the workspace index as documents are updated (in milliseconds)",
+      "default": 100
+    },
+    "language_server_worse_reflection.inlay_hints.enable": {
+      "description": "Enable inlay hints (experimental)",
+      "default": false
+    },
+    "language_server_worse_reflection.inlay_hints.types": {
+      "description": "Show inlay type hints for variables",
+      "default": false
+    },
+    "language_server_worse_reflection.inlay_hints.params": {
+      "description": "Show inlay hints for parameters",
+      "default": true
+    },
+    "language_server_worse_reflection.diagnostics.enable": {
+      "description": "Enable diagnostics",
+      "default": true
+    },
+    "language_server_indexer.workspace_symbol_search_limit": {
+      "description": null,
+      "default": 250
+    },
+    "language_server_indexer.reindex_timeout": {
+      "description": "Unconditionally reindex modified files every N seconds",
+      "default": 300
+    },
+    "language_server_code_transform.import_name.report_non_existing_names": {
+      "description": "Show an error if a diagnostic name cannot be resolved - can produce false positives",
+      "default": true
+    },
+    "language_server_configuration.auto_config": {
+      "description": "Prompt to enable extensions which apply to your project on language server start",
+      "type": ["boolean"],
+      "default": true
+    },
+    "indexer.enabled_watchers": {
+      "description": "List of allowed watchers. The first watcher that supports the current system will be used",
+      "type": ["object"],
+      "default": ["inotify", "watchman", "find", "php"]
+    },
+    "indexer.index_path": {
+      "description": "Path where the index should be saved",
+      "type": ["string"],
+      "default": "%cache%\/index\/%project_id%"
+    },
+    "indexer.include_patterns": {
+      "description": "Glob patterns to include while indexing",
+      "type": ["object"],
+      "default": ["\/**\/*.php"]
+    },
+    "indexer.exclude_patterns": {
+      "description": "Glob patterns to exclude while indexing",
+      "type": ["object"],
+      "default": [
+        "\/vendor\/**\/Tests\/**\/*",
+        "\/vendor\/**\/tests\/**\/*",
+        "\/vendor\/composer\/**\/*"
+      ]
+    },
+    "indexer.stub_paths": {
+      "description": "Paths to external folders to index. They will be indexed only once, if you want to take any changes into account you will have to reindex your project manually.",
+      "type": ["object"],
+      "default": []
+    },
+    "indexer.poll_time": {
+      "description": "For polling indexers only: the time, in milliseconds, between polls (e.g. filesystem scans)",
+      "type": ["integer"],
+      "default": 5000
+    },
+    "indexer.buffer_time": {
+      "description": "For real-time indexers only: the time, in milliseconds, to buffer the results",
+      "type": ["integer"],
+      "default": 500
+    },
+    "indexer.follow_symlinks": {
+      "description": "To allow indexer to follow symlinks",
+      "type": ["boolean"],
+      "default": false
+    },
+    "indexer.project_root": {
+      "description": "The root path to use for scanning the index",
+      "type": ["string"],
+      "default": "%project_root%"
+    },
+    "indexer.reference_finder.deep": {
+      "description": "Recurse over class implementations to resolve all references",
+      "type": ["boolean"],
+      "default": true
+    },
+    "indexer.implementation_finder.deep": {
+      "description": "Recurse over class implementations to resolve all class implementations (not just the classes directly implementing the subject)",
+      "type": ["boolean"],
+      "default": true
+    },
+    "indexer.supported_extensions": {
+      "description": "File extensions (e.g. `php`) for files that should be indexed",
+      "type": ["object"],
+      "default": ["php"]
+    },
+    "object_renderer.template_paths.markdown": {
+      "description": "Paths in which to look for templates for hover information.",
+      "default": [
+        "%project_config%\/templates\/markdown",
+        "%config%\/templates\/markdown"
+      ]
+    },
+    "language_server_phpstan.bin": {
+      "description": "Path to the PHPStan executable",
+      "default": "%project_root%\/vendor\/bin\/phpstan"
+    },
+    "language_server_phpstan.level": {
+      "description": "Override the PHPStan level"
+    },
+    "language_server_phpstan.config": {
+      "description": "Override the PHPStan configuration file"
+    },
+    "language_server_phpstan.mem_limit": {
+      "description": "Override the PHPStan memory limit"
+    },
+    "language_server_psalm.bin": {
+      "description": "Path to psalm if different from vendor\/bin\/psalm",
+      "type": ["string"],
+      "default": "%project_root%\/vendor\/bin\/psalm"
+    },
+    "language_server_psalm.show_info": {
+      "description": "If infos from psalm should be displayed",
+      "type": ["boolean"],
+      "default": true
+    },
+    "language_server_psalm.use_cache": {
+      "description": "If the Psalm cache should be used (see the `--no-cache` option)",
+      "type": ["boolean"],
+      "default": true
+    },
+    "language_server_psalm.error_level": {
+      "description": "Override level at which Psalm should report errors (lower => more errors)"
+    },
+    "language_server_psalm.threads": {
+      "description": "Set the number of threads Psalm should use. Warning: NULL will use as many as possible and may crash your computer",
+      "type": ["integer"],
+      "default": 1
+    },
+    "language_server_psalm.timeout": {
+      "description": "Kill the psalm process after this number of seconds",
+      "type": ["integer"],
+      "default": 15
+    },
+    "language_server_php_cs_fixer.bin": {
+      "description": "Path to the php-cs-fixer executable",
+      "default": "%project_root%\/vendor\/bin\/php-cs-fixer"
+    },
+    "language_server_php_cs_fixer.env": {
+      "description": "Environment for PHP CS Fixer (e.g. to set PHP_CS_FIXER_IGNORE_ENV)",
+      "default": {
+        "XDEBUG_MODE": "off",
+        "PHP_CS_FIXER_IGNORE_ENV": true
+      }
+    },
+    "language_server_php_cs_fixer.show_diagnostics": {
+      "description": "Whether PHP CS Fixer diagnostics are shown",
+      "default": true
+    },
+    "language_server_php_cs_fixer.config": {
+      "description": "Set custom PHP CS config path. Ex., %project_root%\/.php-cs-fixer.php"
+    },
+    "php_code_sniffer.bin": {
+      "description": "Path to the phpcs executable",
+      "default": "%project_root%\/vendor\/bin\/phpcs"
+    },
+    "php_code_sniffer.env": {
+      "description": "Environment for PHP_CodeSniffer (e.g. to set XDEBUG_MODE)",
+      "default": {
+        "XDEBUG_MODE": "off"
+      }
+    },
+    "php_code_sniffer.show_diagnostics": {
+      "description": "Whether PHP_CodeSniffer diagnostics are shown",
+      "default": true
+    },
+    "php_code_sniffer.args": {
+      "description": "Additional arguments to pass to the PHPCS process",
+      "default": []
+    },
+    "php_code_sniffer.cwd": {
+      "description": "Working directory for PHPCS"
+    },
+    "behat.config_path": {
+      "description": "Path to the main behat.yml (including the filename behat.yml)",
+      "default": "%project_root%\/behat.yml"
+    },
+    "behat.symfony.di_xml_path": {
+      "description": "If using Symfony, set this path to the XML container dump to find contexts which are defined as services"
+    },
+    "symfony.xml_path": {
+      "description": "Path to the Symfony container XML dump file",
+      "default": "%project_root%\/var\/cache\/dev\/App_KernelDevDebugContainer.xml"
+    },
+    "completion_worse.completor.symfony.enabled": {
+      "description": "Enable\/disable the Symfony completor - depends on Symfony extension being enabled",
+      "default": true
+    },
+    "public_services_only": {
+      "description": "Only consider public services when providing analysis for the service locator",
+      "default": false
+    }
+  }
+}
