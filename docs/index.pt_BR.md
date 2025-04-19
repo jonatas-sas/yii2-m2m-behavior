@@ -60,14 +60,16 @@ E então vincula ou desvincula os registros automaticamente.
 ## 💡 Exemplo de Uso
 
 ```php
+use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use odara\yii\behaviors\LinkManyToManyBehavior;
 
 /**
  * @property int        $id
  * @property string     $name
  *
- * @property int[]      $tagIds          Virtual attribute to assign tag IDs
- * @property-read Tag[] $tags            Related tag models
+ * @property-read Tag[] $tags
+ * @property int[]      $tagIds
  */
 class Item extends ActiveRecord
 {
@@ -78,23 +80,24 @@ class Item extends ActiveRecord
     {
         return [
             'tags' => [
-                'class'              => LinkManyToManyBehavior::class,
-                'relation'           => 'tags',
+                'class' => LinkManyToManyBehavior::class,
+                'relation' => 'tags',
                 'referenceAttribute' => 'tagIds',
-                'deleteOnUnlink'     => true,
-                'extraColumns'       => [
-                    'source'     => 'manual',
-                    'created_at' => static fn() => time(),
+                'deleteOnUnlink' => true,
+                'extraColumns' => [
+                    'source' => 'admin',
+                    'created_at' => static fn (): int => time(),
                 ],
             ],
         ];
     }
 
     /**
-     * @return \yii\db\ActiveQuery
-     * @property-read Tag[] $tags
+     * Returns the relation between Item and Tag models.
+     *
+     * @return ActiveQuery
      */
-    public function getTags()
+    public function getTags(): ActiveQuery
     {
         return $this->hasMany(Tag::class, ['id' => 'tag_id'])
             ->viaTable('item_tag', ['item_id' => 'id']);
@@ -106,7 +109,9 @@ Uso:
 
 ```php
 $item = Item::findOne(1);
+
 $item->tagIds = [1, 2, 3];
+
 $item->save();
 ```
 
@@ -127,7 +132,7 @@ echo $form->field($model, 'tagIds')->checkboxList(
 ```php
 [
     'attribute' => 'tags',
-    'value' => fn($model) => implode(', ', ArrayHelper::getColumn($model->tags, 'name')),
+    'value'     => fn($model) => implode(', ', ArrayHelper::getColumn($model->tags, 'name')),
 ]
 ```
 
@@ -136,7 +141,7 @@ echo $form->field($model, 'tagIds')->checkboxList(
 ```php
 [
     'attribute' => 'tags',
-    'value' => implode(', ', ArrayHelper::getColumn($model->tags, 'name')),
+    'value'     => implode(', ', ArrayHelper::getColumn($model->tags, 'name')),
 ]
 ```
 
@@ -169,7 +174,7 @@ Use as anotações abaixo nos seus modelos para melhor suporte em IDEs:
 
 ```php
 /**
- * @property int[] $tagIds
+ * @property      int[] $tagIds
  * @property-read Tag[] $tags
  */
 ```
