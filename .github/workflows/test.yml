@@ -24,7 +24,7 @@ jobs:
         run: composer install --no-progress --no-interaction
 
       - name: Run tests with coverage
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml --colors=always
+        run: vendor/bin/phpunit --verbose --coverage-clover=coverage.xml --coverage-html=coverage --colors=always
         env:
           XDEBUG_MODE: coverage
 
