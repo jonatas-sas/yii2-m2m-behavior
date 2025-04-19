@@ -1,29 +1,32 @@
 # Yii2 Many to Many Behavior
 
-<table>
+<table style="width:100%;border:0;">
   <tr>
     <td>
 
 [![Version](https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior)  
-[![License](https://img.shields.io/packagist/l/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)  
-[![Lint](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml)  
-[![Static](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml)
+[![License](https://img.shields.io/packagist/l/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)
+[![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square)](https://www.yiiframework.com/)
 
 </td>
 <td>
 
-[![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml)  
-[![Security](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml)  
-[![Dependabot](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates)  
-[![Coverage](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
+[![Lint](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml)  
+[![Static](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml)
+[![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml)
 
 </td>
   </tr>
-</table>
+  <tr>
+<td>
+[![Security](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml)
+[![Dependabot](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates)  
+[![Coverage](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square" alt="Yii2">
-</p>
+    </td>
+
+  </tr>
+</table>
 
 A reusable and robust behavior for managing many-to-many (M2M) relationships in **Yii2 ActiveRecord** using virtual attributes.
 
