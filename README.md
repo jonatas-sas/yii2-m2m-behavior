@@ -1,27 +1,40 @@
 # Yii2 Many to Many Behavior
 
 <p align="center">
-
-[![Version](https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior)  
-[![License](https://img.shields.io/packagist/l/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square)](LICENSE)
-[![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square)](https://www.yiiframework.com/)
-
+  <a href="https://packagist.org/packages/jonatas-sas/yii2-m2m-behavior" title="View on Packagist">
+    <img src="https://img.shields.io/packagist/v/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="Packagist Version">
+  </a>
+  <a href="LICENSE" title="View License">
+    <img src="https://img.shields.io/packagist/l/jonatas-sas/yii2-m2m-behavior.svg?style=flat-square" alt="License">
+  </a>
+  <a href="https://www.yiiframework.com/" title="Yii Framework Website">
+    <img src="https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat-square" alt="Powered by Yii Framework">
+  </a>
 </p>
-
 <p align="center">
-
-[![Lint](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml)  
-[![Static](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml)
-[![Tests](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml)
-
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml" title="Lint Workflow Status">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/lint.yml/badge.svg" alt="Lint Workflow">
+  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml" title="Static Analysis Status">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/static.yml/badge.svg" alt="Static Analysis">
+  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml" title="Test Workflow Status">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/test.yml/badge.svg" alt="Tests Workflow">
+  </a>
 </p>
-
 <p align="center">
-
-[![Security](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml)
-[![Dependabot](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates)  
-[![Coverage](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg)](https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior)
-
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml" title="Security Scan Status">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/security.yml/badge.svg" alt="Security Workflow">
+  </a>
+  <a href="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates" title="Dependabot Updates">
+    <img src="https://github.com/jonatas-sas/yii2-m2m-behavior/actions/workflows/dependabot/dependabot-updates/badge.svg" alt="Dependabot Updates">
+  </a>
+  <a href="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior" title="Code Coverage Report">
+    <img src="https://codecov.io/gh/jonatas-sas/yii2-m2m-behavior/branch/main/graph/badge.svg" alt="Code Coverage">
+  </a>
+</p>
+<p align="center">
+  <img src="https://www.yiiframework.com/image/logo/yii.png" alt="Yii Framework Logo" width="160" title="Yii Framework Logo">
 </p>
 
 A reusable and robust behavior for managing many-to-many (M2M) relationships in **Yii2 ActiveRecord** using virtual attributes.
