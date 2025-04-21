@@ -205,9 +205,8 @@ class LinkManyToManyBehaviorTest extends TestCase
             {
                 $query = Yii::createObject(ActiveQuery::class, [new stdClass()]);
 
-                $query->modelClass = stdClass::class; // ❌ inválido
+                $query->modelClass = stdClass::class;
 
-                //@phpstan-ignore-next-line
                 return $query;
             }
         };
