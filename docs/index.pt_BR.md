@@ -17,6 +17,7 @@ Um comportamento simples e flexível para o Yii2 que permite gerenciar relaçõe
 - [Opções](#opcoes)
 - [Funcionalidades Avançadas](#funcionalidades-avancadas)
 - [Anotações PHPDoc](#anotacoes-phpdoc)
+- [Limitações](#limitacoes)
 
 ---
 
@@ -177,4 +178,16 @@ Use as anotações abaixo nos seus modelos para melhor suporte em IDEs:
  * @property      int[] $tagIds
  * @property-read Tag[] $tags
  */
+```
+
+## ⚠️ Limitações
+
+### 🚫 Chaves Primárias Compostas Não Suportadas
+
+A versão atual **não oferece suporte** a chaves primárias compostas (multi-coluna).
+
+Se o modelo relacionado à `relation` definir mais de uma coluna como chave primária, o comportamento lançará uma exceção durante o `attach()`:
+
+```php
+InvalidArgumentException: Composite primary keys are not yet supported by LinkManyToManyBehavior.
 ```

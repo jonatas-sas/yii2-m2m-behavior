@@ -11,17 +11,19 @@ use yii\db\ActiveRecord;
  *
  * Represents an entity that is linked to multiple tags via a junction table.
  *
- * @property int        $id
- * @property string     $name
- * @property array      $tagIds
- * @property Tag[]      $tags
- * @property array      $categoryIds
- * @property Category[] $categories
+ * @property int                  $id
+ * @property string               $name
+ * @property array<mixed>         $tagIds
+ * @property array<mixed>         $categoryIds
+ * @property-read array<Tag>      $tags
+ * @property-read array<Category> $categories
  */
 class Item extends ActiveRecord
 {
     /**
      * @inheritdoc
+     *
+     * @return string
      */
     public static function tableName()
     {
@@ -31,7 +33,7 @@ class Item extends ActiveRecord
     /**
      * Declares the many-to-many behavior to manage tag relations.
      *
-     * @return array
+     * @return array<array<mixed>>
      */
     public function behaviors()
     {
@@ -58,7 +60,8 @@ class Item extends ActiveRecord
      */
     public function getTags(): ActiveQuery
     {
-        return $this->hasMany(Tag::class, ['id' => 'tag_id'])
+        return $this
+            ->hasMany(Tag::class, ['id' => 'tag_id'])
             ->viaTable('item_tag', ['item_id' => 'id']);
     }
 
@@ -69,7 +72,8 @@ class Item extends ActiveRecord
      */
     public function getCategories(): ActiveQuery
     {
-        return $this->hasMany(Category::class, ['id' => 'category_id'])
+        return $this
+            ->hasMany(Category::class, ['id' => 'category_id'])
             ->viaTable('item_category', ['item_id' => 'id']);
     }
 }

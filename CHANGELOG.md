@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] – 2025-04-21
+
+### ✨ Added
+
+- ✅ Full synchronization between manual relation updates (`with()`, `populateRelation()`) and the internal reference state using a `relationHash` mechanism.
+- ✅ Method `isReferenceRelationDirty()` to detect relation mismatches.
+- ✅ Method `updateReferenceFromRelation()` to allow forced re-syncing.
+- ✅ Getter `getIsReferenceValueInitialized()` to help detect first-time setup.
+- ✅ Support for key format normalization using `buildReferenceKey()`.
+- ✅ Added configuration example to ignore Phpactor's diagnostic "worse.missing_return_type", as this is already covered by PHPStan.
+
+### 🧪 New Tests
+
+- `testReferenceValueFromPopulateRelation`
+- `testGetReferenceValueThrowsIfPrimaryKeyFieldIsMissing`
+- `testGetReferenceValueThrowsIfPrimaryKeyFieldHasInvalidType`
+- `testAfterSaveSkipsWhenReferenceNotInitialized`
+- `testUnknownPropertyAccessTriggersExceptionSafely`
+- `testUnknownPropertySetTriggersExceptionSafely`
+- `testAttachFailsIfRelationClassIsNotActiveRecord`
+- `testGetRelatedRecordsThrowsIfInvalidRelation`
+
+### ♻️ Changed
+
+- Refactored `attach()` method with early checks and exceptions.
+- Improved handling of invalid internal `referenceValueInternal` structures.
+- More robust fallback logic for unset or empty relations.
+- Split logic for internal vs external assignment via `referenceWasSetManually`.
+- Improved method visibility for testing using reflection when needed.
+
+### ❌ Removed
+
+- 🚫 Removed support for composite primary keys (temporarily disabled with `InvalidArgumentException`).
+- 🚫 Removed legacy support paths for mixed composite handling.
+
+---
+
 ## [2.0.2] – 2025-04-19
 
 ### 🔒 PHP Version Policy

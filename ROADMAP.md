@@ -57,7 +57,6 @@ This roadmap outlines planned features and enhancements for the package.
 
 ### 📦 Composer & Ecosystem
 
-- [ ] Add `ext-yii2` compatibility badge
 - [ ] Generate typed stubs for IDEs (PHPStorm, etc.)
 - [ ] Add support for Yii3 split package (future-proof)
 
@@ -75,4 +74,3 @@ This roadmap outlines planned features and enhancements for the package.
 
 - [ ] Add GitHub Discussions
 - [x] Add Templates for Bug / Feature Reports
-- [ ] Add section on how to suggest improvements to the behavior

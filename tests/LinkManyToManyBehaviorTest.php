@@ -8,14 +8,18 @@ use odara\yii\tests\fixtures\ItemCategoryFixture;
 use odara\yii\tests\fixtures\ItemFixture;
 use odara\yii\tests\fixtures\ItemTagFixture;
 use odara\yii\tests\fixtures\TagFixture;
-use odara\yii\tests\helpers\TestableLinkManyToManyBehavior;
 use odara\yii\tests\models\Item;
 use odara\yii\tests\models\Tag;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use stdClass;
 use Yii;
+use yii\base\Component;
 use yii\base\Event;
 use yii\base\InvalidArgumentException;
 use yii\base\UnknownPropertyException;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 use yii\db\Query;
 use yii\test\FixtureTrait;
@@ -81,17 +85,152 @@ class LinkManyToManyBehaviorTest extends TestCase
         $db->createCommand()->dropTable('item')->execute();
     }
 
+    // SECTION: Attach Method Validation
+    /**
+     * It should throw if the behavior is attached to a non-ActiveRecord object.
+     *
+     * Ensures the behavior is only applied to ActiveRecord-based models, preventing misuse.
+     */
+    public function testAttachFailsIfOwnerIsNotActiveRecord(): void
+    {
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'tags',
+            'referenceAttribute' => 'tagIds',
+        ]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Behavior must be attached to an instance of yii\db\BaseActiveRecord.');
+
+        $target = new Component();
+
+        //@phpstan-ignore-next-line
+        $behavior->attach($target);
+    }
+
+    /**
+     * It should throw if the "relation" property is not set.
+     *
+     * Validates that the relation name must be explicitly defined for behavior to function.
+     */
+    public function testAttachFailsIfRelationIsNotDefined(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "relation" property must be defined.');
+
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'referenceAttribute' => 'tagIds',
+        ]);
+
+        $item->attachBehavior('tags', $behavior);
+    }
+
+    /**
+     * It should throw if the "referenceAttribute" property is not set.
+     *
+     * Ensures that a valid reference attribute is defined for virtual field support.
+     */
+    public function testAttachFailsIfReferenceAttributeIsNotDefined(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "referenceAttribute" property must be defined.');
+
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation' => 'tags',
+        ]);
+
+        $item->attachBehavior('tags', $behavior);
+    }
+
+    /**
+     * It should throw if the relation method (getter) does not exist on the model.
+     *
+     * Confirms that the behavior validates method presence like `getTags()` correctly.
+     */
+    public function testAttachFailsIfRelationGetterDoesNotExist(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Relation method "getInvalidRelation()" does not exist on class');
+
+        $item = new Item();
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'invalidRelation',
+            'referenceAttribute' => 'invalidIds',
+        ]);
+
+        $item->attachBehavior('invalid', $behavior);
+    }
+
+    /**
+     * It should throw if the relation method does not return an ActiveQueryInterface.
+     *
+     * Verifies that relation methods must return a valid query object.
+     */
+    public function testAttachFailsIfRelationDoesNotReturnActiveQuery(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Relation "elements" must return an instance of yii\db\ActiveQueryInterface.');
+
+        $item = new class extends Item {
+            public function getElements(): string
+            {
+                return 'not a query';
+            }
+        };
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'elements',
+            'referenceAttribute' => 'elementsIds',
+        ]);
+
+        $item->attachBehavior('elements', $behavior);
+    }
+
+    /**
+     * It should throw if the relation does not return a valid ActiveRecordInterface model class.
+     */
+    public function testAttachFailsIfRelationModelClassIsInvalid(): void
+    {
+        $msg = 'Relation "invalid" must be a valid relation to a class implementing yii\db\ActiveRecordInterface.';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($msg);
+
+        $item = new class extends Item {
+            public function getInvalid(): ActiveQuery
+            {
+                $query = Yii::createObject(ActiveQuery::class, [new stdClass()]);
+
+                $query->modelClass = stdClass::class;
+
+                return $query;
+            }
+        };
+
+        $behavior = new LinkManyToManyBehavior([
+            'relation'           => 'invalid',
+            'referenceAttribute' => 'invalidIds',
+        ]);
+
+        $item->attachBehavior('invalid', $behavior);
+    }
+
+    // SECTION: Getters & Setters (Magic Methods)
     /**
      * It should skip attribute reading if property is not the referenceAttribute.
      */
     public function testAccessingUnknownPropertyThrowsException(): void
     {
-        $post = new Item();
+        $item = new Item();
 
         $this->expectException(UnknownPropertyException::class);
 
         //@phpstan-ignore-next-line
-        $post->nonExistentAttribute;
+        $item->nonExistentAttribute;
     }
 
     /**
@@ -153,50 +292,6 @@ class LinkManyToManyBehaviorTest extends TestCase
     }
 
     /**
-     * It should initialize the reference value correctly from the tags relation.
-     */
-    public function testReferenceValueInitializationFromTagsRelation(): void
-    {
-        $item = new Item();
-
-        $item->name = 'Teste Init';
-
-        $item->populateRelation('tags', [
-            Tag::findOne(1),
-            Tag::findOne(2),
-            Tag::findOne(3),
-        ]);
-
-        /** @var LinkManyToManyBehavior $behavior */
-        $behavior = $item->getBehavior('tags');
-
-        $this->assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
-
-        $referenceValue = $behavior->getReferenceValue();
-
-        $this->assertEquals([1, 2, 3], $referenceValue);
-    }
-
-    /**
-     * It should normalize primary keys properly.
-     */
-    public function testNormalizePrimaryKey(): void
-    {
-        $behavior = new TestableLinkManyToManyBehavior();
-
-        $this->assertSame(42, $behavior->normalizePrimaryKeyPublic(42));
-
-        $object = new class {
-            public function __toString(): string
-            {
-                return 'abc123';
-            }
-        };
-
-        $this->assertSame('abc123', $behavior->normalizePrimaryKeyPublic($object));
-    }
-
-    /**
      * It should allow setting and getting the virtual reference attribute (e.g., tagIds).
      */
     public function testItShouldSetAndGetReferenceAttribute(): void
@@ -211,6 +306,232 @@ class LinkManyToManyBehaviorTest extends TestCase
     }
 
     /**
+     * It should throw if a scalar is assigned to a reference attribute expecting an array or ActiveRecord.
+     *
+     * The behavior only accepts:
+     * - scalar array values (for simple PKs)
+     * - associative arrays (for composed PKs)
+     * - instances of ActiveRecord
+     * - or an array of any of the above
+     *
+     * Assigning a single scalar directly should raise an exception.
+     */
+    public function testReferenceAttributeThrowsIfScalarProvided(): void
+    {
+        $err = 'Invalid reference value for "tagIds". Expected an array or instance of yii\db\ActiveRecordInterface.';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($err);
+
+        $item = new Item(['name' => 'Invalid Tag Input']);
+
+        //@phpstan-ignore-next-line
+        $item->tagIds = 1;
+    }
+
+    // SECTION: Relation Population
+    /**
+     * It should initialize the reference value correctly when using populateRelation with ActiveRecord instances.
+     *
+     * This ensures that calling `populateRelation()` with ActiveRecord objects
+     * initializes the internal reference value accordingly.
+     */
+    public function testReferenceValueFromPopulateRelation(): void
+    {
+        $item = new Item(['name' => 'Teste Init']);
+
+        $item->populateRelation('tags', [Tag::findOne(1), Tag::findOne(2), Tag::findOne(3)]);
+
+        /** @var LinkManyToManyBehavior $behavior */
+        $behavior = $item->getBehavior('tags');
+
+        $this->assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $this->assertEquals([1, 2, 3], $item->tagIds);
+    }
+
+    /**
+     * It should accept scalar values when assigning reference attribute directly.
+     *
+     * This verifies that assigning simple scalar identifiers to the virtual attribute
+     * normalizes them correctly and makes them accessible through the getter.
+     */
+    public function testReferenceValueFromScalarIds(): void
+    {
+        $item = new Item(['name' => 'Teste Scalars']);
+
+        $item->tagIds = [1, 2, 3];
+
+        $this->assertEquals([1, 2, 3], $item->tagIds);
+    }
+
+    /**
+     * It should accept ActiveRecord instances when assigning reference attribute.
+     *
+     * This validates that assigning a list of ActiveRecord models to the virtual attribute
+     * extracts their primary keys properly and stores them as reference value.
+     */
+    public function testReferenceValueFromActiveRecordInstances(): void
+    {
+        $item = new Item(['name' => 'Teste AR']);
+
+        $item->tagIds = [
+            Tag::findOne(1),
+            Tag::findOne(2),
+            Tag::findOne(3),
+        ];
+
+        $this->assertEquals([1, 2, 3], $item->tagIds);
+    }
+
+    /**
+     * It should normalize mixed scalar values and ActiveRecord instances when assigned.
+     *
+     * This ensures the behavior supports mixed input types for virtual attributes,
+     * normalizing them consistently into a scalar primary key list.
+     */
+    public function testReferenceValueMixedScalarAndActiveRecord(): void
+    {
+        $item = new Item(['name' => 'Teste Mixed']);
+
+        $item->tagIds = [
+            1,
+            Tag::findOne(2),
+            3,
+        ];
+
+        $this->assertEquals([1, 2, 3], $item->tagIds);
+    }
+
+    /**
+     * It should normalize a single ActiveRecord instance assigned directly to the virtual attribute.
+     * Compatibility with Yii populateRelation method. This should not be used.
+     */
+    public function testReferenceValueFromSingleActiveRecord(): void
+    {
+        $item = new Item(['name' => 'Single AR']);
+
+        //@phpstan-ignore-next-line
+        $item->tagIds = Tag::findOne(2);
+
+        $item->save();
+
+        $item->refresh();
+
+        $this->assertEquals([2], $item->tagIds);
+    }
+
+    // SECTION: Getters and Setters
+    /**
+     * It should throw if the relation is populated with invalid (non-ActiveRecord) values.
+     *
+     * This test simulates an invalid population of a relation with an object
+     * that does not implement ActiveRecordInterface, which should trigger
+     * an InvalidArgumentException during `getRelatedRecords()`.
+     */
+    public function testGetRelatedRecordsThrowsIfRelationContainsInvalidValues(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('All records in relation');
+
+        $item = new Item();
+        $item->populateRelation('tags', [new stdClass()]); // invalid object
+
+        /** @var LinkManyToManyBehavior $behavior */
+        $behavior = $item->getBehavior('tags');
+
+        $behavior->getRelatedRecords(); // should throw
+    }
+
+    /**
+     * It should return empty array when relation is not populated.
+     */
+    public function testGetRelatedRecordsReturnsEmptyArrayWhenRelationIsNull(): void
+    {
+        $item = new Item(['name' => 'Empty Relation']);
+
+        $item->detachBehavior('tags');
+        $item->attachBehavior('tags', new LinkManyToManyBehavior([
+            'relation'           => 'tags',
+            'referenceAttribute' => 'tagIds',
+        ]));
+
+        /** @var LinkManyToManyBehavior $behavior */
+        $behavior = $item->getBehavior('tags');
+
+        /** @var array $related */
+        //@phpstan-ignore-next-line
+        $related = $behavior->getRelatedRecords();
+
+        $this->assertSame([], $related);
+    }
+
+    /**
+     * It should throw if the internal reference value is missing expected primary key fields.
+     *
+     * This test forces an invalid reference value internally to simulate a corrupted state
+     * and ensures the behavior throws an exception when attempting to access the getter.
+     */
+    public function testGetReferenceValueThrowsIfPrimaryKeyFieldIsMissing(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected array with key');
+
+        $item     = new Item();
+        $behavior = $item->getBehavior('tags');
+
+        self::assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $reflection = new ReflectionClass($behavior);
+
+        $valueProp = $reflection->getProperty('referenceValueInternal');
+
+        $valueProp->setAccessible(true);
+        $valueProp->setValue($behavior, [['wrong_key' => 123]]);
+
+        $manualProp = $reflection->getProperty('referenceWasSetManually');
+
+        $manualProp->setAccessible(true);
+        $manualProp->setValue($behavior, true);
+
+        //@phpstan-ignore-next-line
+        $item->tagIds;
+    }
+
+    /**
+     * It should update the reference value automatically when the relation is dirty and not set manually.
+     *
+     * This test ensures that `getReferenceValue()` triggers `updateReferenceFromRelation()` when
+     * the manual override flag is false and the relation hash indicates a change.
+     */
+    public function testReferenceValueTriggersAutoUpdateWhenDirty(): void
+    {
+        $item = new Item(['name' => 'Auto Update']);
+        $item->populateRelation('tags', [Tag::findOne(1)]);
+
+        $behavior = $item->getBehavior('tags');
+
+        self::assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $reflection = new ReflectionClass($behavior);
+
+        $manual = $reflection->getProperty('referenceWasSetManually');
+
+        $manual->setAccessible(true);
+        $manual->setValue($behavior, false);
+
+        $internal = $reflection->getProperty('referenceValueInternal');
+
+        $internal->setAccessible(true);
+        $internal->setValue($behavior, null);
+
+        $tagIds = $item->tagIds;
+
+        $this->assertEquals([1], $tagIds);
+    }
+
+    // SECTION: Save (Insert & Update)
+    /**
      * It should link new models after saving a new parent.
      */
     public function testItShouldLinkModelsOnSave(): void
@@ -224,7 +545,124 @@ class LinkManyToManyBehaviorTest extends TestCase
         $item->save(false);
 
         $this->assertCount(2, $item->tags);
-        $this->assertEqualsCanonicalizing([1, 2], array_map(fn ($tag) => $tag->id, $item->tags));
+
+        $this->assertEqualsCanonicalizing(
+            [1, 2],
+            array_map(static fn ($tag) => $tag->id, $item->tags)
+        );
+    }
+
+    /**
+     * It should skip afterSave() logic when reference value is not initialized.
+     */
+    public function testAfterSaveSkipsWhenReferenceNotInitialized(): void
+    {
+        $item = new Item(['name' => 'Skip afterSave']);
+
+        /** @var LinkManyToManyBehavior $behavior */
+        $behavior = $item->getBehavior('tags');
+
+        $ref = new ReflectionClass($behavior);
+
+        $prop = $ref->getProperty('referenceValueInternal');
+
+        $prop->setAccessible(true);
+        $prop->setValue($behavior, null);
+
+        $event = new Event(['sender' => $item]);
+
+        $behavior->afterSave($event);
+
+        $this->assertFalse($behavior->getIsReferenceValueInitialized());
+    }
+
+    /**
+     * It should throw an exception when the related model defines a composite primary key.
+     *
+     * This test ensures that the behavior explicitly rejects usage with models that declare
+     * multi-column primary keys. Although composite keys may be supported in the future,
+     * they are currently not allowed and should trigger an InvalidArgumentException.
+     *
+     * The relation is simulated using an anonymous class that overrides `primaryKey()`
+     * to return multiple fields, without requiring actual database persistence.
+     */
+    public function testItShouldThrowIfRelatedModelHasCompositePrimaryKey(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Composite primary keys are not yet supported');
+
+        $item = new class extends Item {
+            public function getCompositeCategories(): ActiveQuery
+            {
+                return $this->hasMany(new class extends ActiveRecord {
+                    public static function tableName(): string
+                    {
+                        return 'dummy';
+                    }
+
+                    public static function primaryKey(): array
+                    {
+                        return ['id', 'uid'];
+                    }
+                }, ['id' => 'category_id', 'uid' => 'category_uid'])
+                ->viaTable('item_dummy', ['item_id' => 'id']);
+            }
+        };
+
+        $item->detachBehavior('composite');
+        $item->attachBehavior('composite', new LinkManyToManyBehavior([
+            'relation'           => 'compositeCategories',
+            'referenceAttribute' => 'compositeCategoryIds',
+        ]));
+    }
+
+    /**
+     * It should reset the manual override flag after saving the model.
+     *
+     * This test ensures that after the relation is synced during `afterSave()`,
+     * the behavior resets the `referenceWasSetManually` flag to false.
+     */
+    public function testAfterSaveResetsManualOverride(): void
+    {
+        $item         = new Item(['name' => 'Manual Reset']);
+        $item->tagIds = [1];
+
+        $item->save(false);
+
+        $behavior = $item->getBehavior('tags');
+
+        self::assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $reflection = new ReflectionClass($behavior);
+
+        $prop = $reflection->getProperty('referenceWasSetManually');
+
+        $prop->setAccessible(true);
+
+        $this->assertFalse($prop->getValue($behavior), 'Manual override flag should be reset after save');
+    }
+
+    /**
+     * It should report relation as dirty when the reference value has not been initialized.
+     *
+     * This test ensures that `isReferenceRelationDirty()` returns true
+     * when the internal reference value is still null.
+     */
+    public function testIsReferenceRelationDirtyReturnsTrueIfUninitialized(): void
+    {
+        $item     = new Item();
+        $behavior = $item->getBehavior('tags');
+
+        self::assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $reflection = new ReflectionClass($behavior);
+
+        $internal = $reflection->getProperty('referenceValueInternal');
+
+        $internal->setAccessible(true);
+        $internal->setValue($behavior, null);
+
+        $this->assertTrue($behavior->isReferenceRelationDirty());
     }
 
     /**
@@ -238,6 +676,7 @@ class LinkManyToManyBehaviorTest extends TestCase
         $item = Item::findOne(1);
 
         $item->tagIds = [1, 2];
+
         $item->save(false);
         $item->refresh();
 
@@ -254,6 +693,21 @@ class LinkManyToManyBehaviorTest extends TestCase
     }
 
     /**
+     * It should not trigger link/unlink if referenceAttribute was not set.
+     */
+    public function testReferenceAttributeNotSetDoesNothing(): void
+    {
+        $item = new Item();
+
+        $item->name = 'No Reference Attribute';
+
+        $item->save(false);
+
+        $this->assertEmpty($item->tags, 'No tags should be linked.');
+    }
+
+    // SECTION: Delete Save Actions
+    /**
      * It should unlink all models from junction table when the owner is deleted.
      */
     public function testItShouldUnlinkAllOnDelete(): void
@@ -262,7 +716,9 @@ class LinkManyToManyBehaviorTest extends TestCase
         $item = Item::findOne(1);
 
         $item->tagIds = [1, 2];
+
         $item->save(false);
+
         $item->refresh();
 
         $this->assertNotNull($item);
@@ -297,16 +753,12 @@ class LinkManyToManyBehaviorTest extends TestCase
         $item->tagIds = [1, 2, 3];
 
         $this->assertTrue($item->save(), 'Initial save failed');
-
-        // Ensure that all three tags are linked
         $this->assertCount(3, $item->tags, 'Initial tags count should be 3');
 
-        // Remove tag ID 2 from the list
         $item->tagIds = [1, 3];
 
         $this->assertTrue($item->save(), 'Update with reduced tags failed');
 
-        // Refresh and verify that tag ID 2 has been removed
         $item->refresh();
 
         $tagIds = array_map(fn ($tag) => (int)$tag->id, $item->tags);
@@ -315,7 +767,6 @@ class LinkManyToManyBehaviorTest extends TestCase
 
         $this->assertEquals([1, 3], $tagIds, 'Tag with ID 2 should have been unlinked');
 
-        // Ensure the junction entry was physically removed
         $exists = (new Query())
             ->from('item_tag')
             ->where(['item_id' => $item->id, 'tag_id' => 2])
@@ -394,30 +845,31 @@ class LinkManyToManyBehaviorTest extends TestCase
         $this->assertTrue($exists, $message);
     }
 
+    // SECTION: Sync Between Behavior and AR
     /**
-     * It should throw an exception if the relation does not exist in the model.
+     * It should reflect whether the reference value was set manually via setter.
      *
-     * @return void
+     * This test ensures that setting the virtual attribute manually marks
+     * the behavior as "manually overridden", and that calling the `resetReferenceManualOverride()`
+     * method clears that state properly.
      */
-    public function testThrowsIfRelationDoesNotExist(): void
+    public function testReferenceManualOverrideStateCanBeReset(): void
     {
-        $this->expectException(UnknownPropertyException::class);
-        $this->expectExceptionMessage('Getting unknown property:');
+        $item = new Item(['name' => 'Manual Flag']);
 
-        $model = new Item();
+        $item->tagIds = [1];
 
-        // Comportamento com relação inválida
-        $model->attachBehavior('m2m', [
-            'class'              => LinkManyToManyBehavior::class,
-            'relation'           => 'nonExistentRelation',
-            'referenceAttribute' => 'fakeIds',
-        ]);
+        /** @var LinkManyToManyBehavior $behavior */
+        $behavior = $item->getBehavior('tags');
 
-        // Tentar acessar a propriedade virtual dispara o acesso à relação
-        //@phpstan-ignore-next-line
-        $model->fakeIds;
+        $this->assertTrue($behavior->isReferenceManualOverride(), 'Manual override should be true after set');
+
+        $behavior->resetReferenceManualOverride();
+
+        $this->assertFalse($behavior->isReferenceManualOverride(), 'Manual override should be false after reset');
     }
 
+    // SECTION: Multiple Behaviors
     /**
      * It should support multiple LinkManyToManyBehavior instances on the same model.
      */
@@ -435,6 +887,7 @@ class LinkManyToManyBehaviorTest extends TestCase
         $this->assertCount(2, $item->categories, 'Category relation should have 2 entries.');
     }
 
+    // SECTION: Extra Columns
     /**
      * It should resolve extraColumns using callables that receive the related model.
      */
@@ -469,72 +922,38 @@ class LinkManyToManyBehaviorTest extends TestCase
         $this->assertTrue($called, 'Extra column callable should have been called with related model.');
     }
 
+    // SECTION: Testing Helpers
     /**
-     * It should throw if reference attribute is not an array.
+     * It should throw if a required primary key field is missing when building reference keys.
+     *
+     * This test calls `buildReferenceKey()` directly with a PK array that lacks the expected field,
+     * ensuring the behavior validates all required fields are present before composing the key.
      */
-    public function testReferenceAttributeThrowsIfNotArray(): void
+    public function testBuildReferenceKeyThrowsIfFieldIsMissing(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Reference value for "tagIds" must be an arrayof relations.');
+        $this->expectExceptionMessage("Missing primary key field");
 
-        $item       = new Item();
-        $item->name = 'Invalid Tag Input';
+        $item     = new Item();
+        $behavior = $item->getBehavior('tags');
 
-        // @phpstan-ignore-next-line
-        $item->tagIds = 1;
+        self::assertInstanceOf(LinkManyToManyBehavior::class, $behavior);
+
+        $reflection = new ReflectionClass($behavior);
+        $method     = $reflection->getMethod('buildReferenceKey');
+
+        $method->setAccessible(true);
+
+        $method->invoke($behavior, ['other_id' => 5], ['id']);
     }
 
-    /**
-     * It should throw an error if the relation is missing or invalid.
-     */
-    public function testMissingRelationThrowsException(): void
-    {
-        $this->expectException(UnknownPropertyException::class);
-
-        $item = new Item();
-
-        $behavior = new LinkManyToManyBehavior([
-            'relation'           => 'nonExistentRelation',
-            'referenceAttribute' => 'nonExistentIds',
-        ]);
-
-        $item->attachBehavior('invalid', $behavior);
-
-        $item->name = 'Invalid Item';
-
-        // @phpstan-ignore-next-line
-        $item->nonExistentIds = [1, 2];
-
-        $item->save(false);
-
-        $behavior->afterSave(new Event(['sender' => $item]));
-    }
-
-    /**
-     * It should not trigger link/unlink if referenceAttribute was not set.
-     */
-    public function testReferenceAttributeNotSetDoesNothing(): void
-    {
-        $item = new Item();
-
-        $item->name = 'No Reference Attribute';
-
-        $item->save(false);
-
-        $this->assertEmpty($item->tags, 'No tags should be linked.');
-    }
-
+    // SECTION: Helpers
     /**
      * Creates the necessary database tables for the test suite.
      *
      * This method checks if each required table already exists before
      * attempting to create it. This allows tests to be run repeatedly
      * without conflicts from duplicate table definitions.
-     *
-     * The following tables are created:
-     * - `item`
-     * - `tag`
-     * - `item_tag` (junction table)
      */
     protected function createTestTables(): void
     {
@@ -559,10 +978,12 @@ class LinkManyToManyBehaviorTest extends TestCase
 
         if (!in_array('category', $tables)) {
             $db->createCommand()->createTable('category', [
-                'id'   => 'pk',
+                'id'   => 'integer NOT NULL',
                 'name' => 'string NOT NULL',
+                'PRIMARY KEY(id)',
             ])->execute();
         }
+
         if (!in_array('item_tag', $tables)) {
             $db->createCommand()->createTable('item_tag', [
                 'item_id'     => 'integer NULL',

@@ -17,6 +17,3 @@ parameters:
 
   checkMissingVarTagTypehint: true
   treatPhpDocTypesAsCertain: false
-
-  ignoreErrors:
-     - '#Access to an undefined property (.*)modelClass.#'
