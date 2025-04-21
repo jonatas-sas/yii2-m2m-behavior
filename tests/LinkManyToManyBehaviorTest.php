@@ -461,6 +461,7 @@ class LinkManyToManyBehaviorTest extends TestCase
         $behavior = $item->getBehavior('tags');
 
         /** @var array $related */
+        //@phpstan-ignore-next-line
         $related = $behavior->getRelatedRecords();
 
         $this->assertSame([], $related);
