@@ -14,6 +14,8 @@ class Tag extends ActiveRecord
 {
     /**
      * @inheritdoc
+     *
+     * @return string
      */
     public static function tableName()
     {

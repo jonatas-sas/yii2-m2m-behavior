@@ -2,5 +2,5 @@
   "$schema": "./phpactor.schema.json",
   "language_server_phpstan.enabled": false,
   "php_code_sniffer.enabled": false,
-  "language_server.diagnostic_ignore_codes": ["MissingReturnTypeProvider"]
+  "language_server.diagnostic_ignore_codes": ["worse.missing_return_type"]
 }

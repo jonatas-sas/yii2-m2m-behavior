@@ -17,6 +17,7 @@ A lightweight and flexible Yii2 behavior for managing many-to-many relations usi
 - [Options](#options)
 - [Advanced Features](#advanced-features)
 - [PHPDoc Annotations](#phpdoc-annotations)
+- [Limitations](#limitations)
 
 ---
 
@@ -177,4 +178,16 @@ Use the following annotations in your models to improve IDE support:
  * @property      int[] $tagIds
  * @property-read Tag[] $tags
  */
+```
+
+## ⚠️ Limitations
+
+### 🚫 Composite Primary Keys Not Supported
+
+This behavior does **not** support composite (multi-column) primary keys.
+
+If a relation's model defines multiple primary key fields, the behavior will throw an exception during `attach()`:
+
+```php
+InvalidArgumentException: Composite primary keys are not yet supported by LinkManyToManyBehavior.
 ```
